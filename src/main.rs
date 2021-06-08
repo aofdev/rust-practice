@@ -5,6 +5,8 @@
 // mod conditionals;
 // mod arrays;
 // mod vectors;
+// mod loops;
+mod functions;
 
 fn main() {
     // vars::run()
@@ -14,5 +16,6 @@ fn main() {
     // conditionals::run()
     // arrays::run()
     // vectors::run()
-    println!("Hello Rust")
+    // loops::run()
+    functions::run()
 }
