@@ -6,7 +6,10 @@
 // mod arrays;
 // mod vectors;
 // mod loops;
-mod functions;
+// mod functions;
+// mod enums;
+// mod structs;
+mod pointer_ref;
 
 fn main() {
     // vars::run()
@@ -17,5 +20,8 @@ fn main() {
     // arrays::run()
     // vectors::run()
     // loops::run()
-    functions::run()
+    // functions::run()
+    // enums::run()
+    // structs::run()
+    pointer_ref::run()
 }
