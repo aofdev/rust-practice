@@ -1,4 +1,4 @@
-// mod vars;
+mod vars;
 // mod types;
 // mod strings;
 // mod tuples;
@@ -9,10 +9,10 @@
 // mod functions;
 // mod enums;
 // mod structs;
-mod pointer_ref;
+// mod pointer_ref;
 
 fn main() {
-    // vars::run()
+    vars::run()
     // types::run()
     // strings::run()
     // tuples::run()
@@ -23,5 +23,5 @@ fn main() {
     // functions::run()
     // enums::run()
     // structs::run()
-    pointer_ref::run()
+    // pointer_ref::run()
 }

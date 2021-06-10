@@ -120,5 +120,6 @@ pub fn run() {
   println!("kyles_var: {:?}", kyles_var);
   
   let is_this_smaller = random_info_var.is_smaller(9); //dot operator if using self, instance method, use . 
-  println!("is_this_smaller: {:?}", is_this_smaller);
+  println!("println 1 is_this_smaller: {:?}", is_this_smaller);
+  println!("println 2 is_this_smaller: {:#?}", is_this_smaller);
 }
