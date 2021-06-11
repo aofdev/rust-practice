@@ -33,6 +33,7 @@ fn meeting(greet: &str, name: &str) {
 }
 
 fn add(n1: i32, n2: i32) -> i32 {
+    // any line without a semi-colon is assumed to be a return value
     n1 + n2
 }
 
@@ -43,6 +44,7 @@ where
     step(value)
 }
 fn add_one(x: i32) -> i32 {
+    // any line without a semi-colon is assumed to be a return value
     x + 1
 }
 
