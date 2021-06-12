@@ -1,4 +1,4 @@
-mod vars;
+// mod vars;
 // mod types;
 // mod strings;
 // mod tuples;
@@ -10,9 +10,10 @@ mod vars;
 // mod enums;
 // mod structs;
 // mod pointer_ref;
+mod ownership_borrowing;
 
 fn main() {
-    vars::run()
+    // vars::run()
     // types::run()
     // strings::run()
     // tuples::run()
@@ -24,4 +25,5 @@ fn main() {
     // enums::run()
     // structs::run()
     // pointer_ref::run()
+    ownership_borrowing::run();
 }
