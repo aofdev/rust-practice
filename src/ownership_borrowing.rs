@@ -1,4 +1,5 @@
-#[allow(unused_variables)]
+
+#[allow(unused_variables, unused_mut)]
 pub fn run() {
 
  // STACK
@@ -43,9 +44,52 @@ pub fn run() {
  heap_procedure(&heap_f64); 
  println!("In function run heap {}", heap_f64);
 
+ // modify
+  let mut x = 42;
+  let x_ref = &x;
+  // x = 13; // cannot modify x
+  println!("x_ref = {}", x_ref);
+  // error: cannot assign to `x` because it is borrowed
+
+
+  // Moves
+  let mut move_v: Vec<i32> = Vec::new();
+  move_v.push(10);
+
+  let move_v1 = move_v; //move_v1 is the new owner
+  // println!("move_v's length is {}", move_v.len()); // error: borrow of moved value: 'move_v'
+
+  // Copies
+  let copy_v: i32 = 50;
+  let copy_v1 = copy_v;
+  // copy_v can still be used
+  println!("copy_v is {}", copy_v);
+
+  // Clone
+  let clone_v: Vec<i32> = vec![1, 2, 3, 4];
+  let clone_v1 = clone_v.clone();
+  // let clone_v1 = clone_v // This would *move* the value, rendering clone_v unusable
+  println!("clone_v's length is {}", clone_v.len());
+
+  // Struct copy
+  let p1 = PointCloneAndCopy { x: 2. };
+  let p2 = p1; // because type has `Copy`, it gets copied automatically.
+  println!("Struct: {:?} {:?}", p1, p2);
+ 
+  // Struct clone
+  let p1 = PointCloneOnly { x: 6. };
+  let p2 = p1.clone(); // because type has no `Copy`, this is a move instead.
+  println!("Struct: {:?} {:?}", p1, p2);
 }
 
-
+#[derive(Debug, Clone, Copy)]
+struct PointCloneAndCopy {
+    x: f64,
+}
+#[derive(Debug, Clone)]
+struct PointCloneOnly {
+    x: f64,
+}
 
 fn stack_procedure(mut param: f64) {
  param += 15.;
