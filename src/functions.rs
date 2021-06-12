@@ -15,16 +15,16 @@ pub fn run() {
     println!("calling using function variable {}", fn_variable(10, 20));
 
     // Higher Order function
-    let result = higer_order_fn(10, add_one);
+    let result = higher_order_fn(10, add_one);
     println!("calling higher order function {}", result);
 
     // Anonymous functions
-    let anonymous_result = higer_order_fn(24, |x: i32| x + 1);
+    let anonymous_result = higher_order_fn(24, |x: i32| x + 1);
     println!("calling higher order function with {}", anonymous_result);
 
     // Higher Order function - Return a function from function
     let step_value = &10;
-    let step_function = higer_order_fn_return(step_value);
+    let step_function = higher_order_fn_return(step_value);
     println!("the stepped value is {}", step_function(50));
 }
 
@@ -37,7 +37,7 @@ fn add(n1: i32, n2: i32) -> i32 {
     n1 + n2
 }
 
-fn higer_order_fn<F>(value: i32, step: F) -> i32
+fn higher_order_fn<F>(value: i32, step: F) -> i32
 where
     F: Fn(i32) -> i32,
 {
@@ -48,6 +48,6 @@ fn add_one(x: i32) -> i32 {
     x + 1
 }
 
-fn higer_order_fn_return<'a>(step_value: &'a i32) -> Box<dyn Fn(i32) -> i32 + 'a> {
+fn higher_order_fn_return<'a>(step_value: &'a i32) -> Box<dyn Fn(i32) -> i32 + 'a> {
     Box::new(move |x: i32| x + step_value)
 }
