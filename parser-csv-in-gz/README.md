@@ -3,7 +3,7 @@
 ## Quick Start ⚡️
 ```bash
 # Run with Cargo
-cargo run -- datasets/test.csv.gz
+cargo run -- datasets/2019-Oct.test.csv.gz
 ```
 
 ## Build 🚀
