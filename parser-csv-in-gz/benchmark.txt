@@ -1,0 +1,20 @@
+Raw
+csv size = 5.67*3 -> 17.01GB
+row size = 127,346,296
+----------------------------------------------------------------
+GZ
+csv gz size = 1.74*3 -> 5.22GB
+row size = 127,346,296
+----------------------------------------------------------------
+
+## single
+match: 119312973 / 127346296 Total = 93.69%
+./target/release/single ./datasets/*.csv.gz  94.52s user 1.23s system 99% cpu 1:36.08 total
+match: 119312973 / 127346296 Total = 93.69%
+./target/release/single ./datasets/*.csv.gz  89.34s user 1.31s system 98% cpu 1:31.64 total
+
+## parallel
+match: 119312973 / 127346296 Total = 93.69%
+./target/release/parallel ./datasets/*.csv.gz  104.90s user 10.82s system 262% cpu 44.105 total
+match: 119312973 / 127346296 Total = 93.69%
+./target/release/parallel ./datasets/*.csv.gz  106.56s user 10.62s system 266% cpu 43.929 total

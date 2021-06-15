@@ -1,0 +1,21 @@
+[package]
+name = "test-csv"
+version = "0.1.0"
+authors = ["aofdev <aof.dev@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+csv = "1.1.6"
+flate2 = { version = "1.0.20", features = ["zlib"], default-features = false } 
+regex = "1.5.4"
+rayon = "1.5.1"
+
+[[bin]]
+name = "single"
+path = "src/single.rs"
+
+[[bin]]
+name = "parallel"
+path = "src/parallel.rs"
