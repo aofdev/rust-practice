@@ -1,0 +1,14 @@
+[package]
+name = "async-practice"
+version = "0.1.0"
+authors = ["aofdev <aof.dev@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+futures = "0.3.15"
+reqwest = { version = "0.11.3", features = ["json"] }
+tokio = { version = "1.7.0", features = ["full"] }
+log = "0.4.14"
+env_logger = "0.8.4"
