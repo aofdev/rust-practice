@@ -1,3 +1,4 @@
+----------------------------Test 1------------------------------
 Raw
 csv size = 5.67*3 -> 17.01GB
 row size = 127,346,296
@@ -18,3 +19,15 @@ match: 119312973 / 127346296 Total = 93.69%
 ./target/release/parallel ./datasets/*.csv.gz  104.90s user 10.82s system 262% cpu 44.105 total
 match: 119312973 / 127346296 Total = 93.69%
 ./target/release/parallel ./datasets/*.csv.gz  106.56s user 10.62s system 266% cpu 43.929 total
+
+
+----------------------------Test 2------------------------------
+Raw
+csv size = 5.67GB
+row size = 42,448,765
+----------------------------------------------------------------
+## single-perf-csv
+match: 39770991 / 42448765 Total = 93.69%
+./target/release/single-csv < ./datasets/2019-Oct.csv  10.09s user 2.20s system 89% cpu 13.741 total
+match: 39770991 / 42448765 Total = 93.69%
+./target/release/single-csv < ./datasets/2019-Oct.csv  10.03s user 2.21s system 97% cpu 12.507 total

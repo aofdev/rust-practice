@@ -17,5 +17,9 @@ name = "single"
 path = "src/single.rs"
 
 [[bin]]
+name = "single-perf-csv"
+path = "src/single-perf-csv.rs"
+
+[[bin]]
 name = "parallel"
 path = "src/parallel.rs"
