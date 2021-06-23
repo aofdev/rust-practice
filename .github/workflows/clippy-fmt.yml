@@ -19,7 +19,6 @@ jobs:
       - name: List folders
         id: list_folders
         run: |
-          cd job
           JOBS=$(for file in $(ls -d */); do
             jq -n --arg job "$file" '{job: $job}'
           done | \
