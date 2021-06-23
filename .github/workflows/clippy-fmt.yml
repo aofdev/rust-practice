@@ -30,14 +30,10 @@ jobs:
     name: Lint folder (${{ matrix.job }})
     needs: check_folders
     strategy:
-      max-parallel: 2
+      max-parallel: 3
       matrix: ${{ fromJson(needs.check_folders.outputs.run_job) }}
     steps:
       - uses: actions/checkout@v2
-      - name: run Lint folder
-        run: echo ${{ matrix.job }}
-        working-directory: ${{ matrix.job }}
-
       - name: Install Rust with rustfmt and clippy
         uses: actions-rs/toolchain@v1
         with:
@@ -47,12 +43,16 @@ jobs:
 
       - name: Check with rustfmt
         uses: actions-rs/cargo@v1
+        working-directory: ${{ matrix.job }}
+        run: echo Check with rustfmt ${{ matrix.job }}
         with:
           command: fmt
           args: --all -- --check
 
       - name: Check with Clippy
         uses: actions-rs/clippy-check@v1
+        working-directory: ${{ matrix.job }}
+        run: echo Check with Clippy ${{ matrix.job }}
         with:
           token: ${{ secrets.GIT_TOKEN }}
           args: --workspace --tests --all-features
