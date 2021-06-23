@@ -1,8 +1,8 @@
 use std::error::Error;
 use std::io;
 
-use regex::bytes::RegexBuilder;
 use csv::{ByteRecord, ReaderBuilder};
+use regex::bytes::RegexBuilder;
 
 struct Stats {
     total: usize,
@@ -10,9 +10,12 @@ struct Stats {
 }
 
 fn main() {
-    let result: Stats = count().expect(&format!("Couldn't read"));
+    let result: Stats = count().unwrap_or_else(|_| panic!("Couldn't read"));
     let percent = 100.0 * result.matching as f32 / result.total as f32;
-    println!("match: {} / {} Total = {:.2}%", result.matching, result.total, percent);
+    println!(
+        "match: {} / {} Total = {:.2}%",
+        result.matching, result.total, percent
+    );
 }
 
 fn count() -> Result<Stats, Box<dyn Error>> {
@@ -20,11 +23,14 @@ fn count() -> Result<Stats, Box<dyn Error>> {
         .has_headers(false)
         .from_reader(io::stdin());
 
-    let regex = RegexBuilder::new(r"(205).*").unicode(false).build().unwrap();
+    let regex = RegexBuilder::new(r"(205).*")
+        .unicode(false)
+        .build()
+        .unwrap();
     let mut record = ByteRecord::new();
     let mut total = 0;
     let mut matching = 0;
- 
+
     while let Ok(true) = reader.read_byte_record(&mut record) {
         total += 1;
         if regex.is_match(&record[3]) {
@@ -33,5 +39,4 @@ fn count() -> Result<Stats, Box<dyn Error>> {
     }
 
     Ok(Stats { total, matching })
-
 }

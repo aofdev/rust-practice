@@ -38,9 +38,6 @@ jobs:
         run: cargo fmt --all -- --check
         working-directory: ${{ matrix.job }}
 
-      - run: rustup component add clippy
       - name: Check with Clippy
-        uses: actions-rs/clippy-check@v1
-        with:
-          token: ${{ secrets.GIT_TOKEN }}
-          args: --workspace --tests --all-features --manifest-path ${{ matrix.job }}/Cargo.toml
+        run: cargo clippy --workspace --tests --all-features
+        working-directory: ${{ matrix.job }}

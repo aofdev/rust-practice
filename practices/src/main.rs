@@ -1,29 +1,29 @@
-// mod vars;
-// mod types;
-// mod strings;
-// mod tuples;
-// mod conditionals;
-// mod arrays;
-// mod vectors;
-// mod loops;
-// mod functions;
-// mod enums;
-// mod structs;
-// mod pointer_ref;
+mod arrays;
+mod conditionals;
+mod enums;
+mod functions;
+mod loops;
 mod ownership_borrowing;
+mod pointer_ref;
+mod strings;
+mod structs;
+mod tuples;
+mod types;
+mod vars;
+mod vectors;
 
 fn main() {
-    // vars::run()
-    // types::run()
-    // strings::run()
-    // tuples::run()
-    // conditionals::run()
-    // arrays::run()
-    // vectors::run()
-    // loops::run()
-    // functions::run()
-    // enums::run()
-    // structs::run()
-    // pointer_ref::run()
+    vars::run();
+    types::run();
+    strings::run();
+    tuples::run();
+    conditionals::run();
+    arrays::run();
+    vectors::run();
+    loops::run();
+    functions::run();
+    enums::run();
+    structs::run();
+    pointer_ref::run();
     ownership_borrowing::run();
 }

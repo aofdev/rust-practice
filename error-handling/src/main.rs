@@ -18,7 +18,7 @@ fn main() {
 
     // Use a fallback value
     // unwrap_or, unwrap_or_else, unwrap_or_default
-    let port = env::var("PORT").unwrap_or("8080".to_string());
+    let port = env::var("PORT").unwrap_or_else(|_| "8080".to_string());
     println!("Port: {}", port);
 
     //Bubble up the error
