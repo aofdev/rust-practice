@@ -33,13 +33,12 @@ jobs:
       max-parallel: 3
       matrix: ${{ fromJson(needs.check_folders.outputs.run_job) }}
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
+      - uses: actions/checkout@v2
       - name: Check with rustfmt
         run: cargo fmt --all -- --check
         working-directory: ${{ matrix.job }}
 
+      - run: rustup component add clippy
       - name: Check with Clippy
         uses: actions-rs/clippy-check@v1
         with:
