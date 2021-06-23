@@ -1,7 +1,7 @@
-use log::*;
-use tokio::task;
-use std::{thread, time};
 use futures::future::join_all;
+use log::*;
+use std::{thread, time};
+use tokio::task;
 
 type Result<T> = std::result::Result<T, Box<dyn std::error::Error + Send + Sync>>;
 
@@ -40,7 +40,6 @@ async fn app_one() -> Result<()> {
     Ok(())
 }
 
-
 async fn request(n: usize) -> Result<()> {
     reqwest::get(slowly(1000)).await?;
     info!("Got response {}", n);
@@ -67,7 +66,7 @@ async fn get_and_analyze(n: usize) -> Result<(u64, u64)> {
 
     // We send our analysis work to a thread where there is no runtime running
     // so we don't block the runtime by analyzing the data
-    let res= task::spawn_blocking(move ||analyze(&txt)).await?;
+    let res = task::spawn_blocking(move || analyze(&txt)).await?;
     info!("Processed {}", n);
     Ok(res)
 }
@@ -76,8 +75,12 @@ async fn get_and_analyze(n: usize) -> Result<(u64, u64)> {
 fn analyze(txt: &str) -> (u64, u64) {
     let txt = txt.as_bytes();
     // Let's spend as much time as we can and count them in two passes
-    let ones = txt.iter().fold(0u64, |acc, b: &u8| acc + b.count_ones() as u64);
-    let zeros = txt.iter().fold(0u64, |acc, b: &u8| acc + b.count_zeros() as u64);
+    let ones = txt
+        .iter()
+        .fold(0u64, |acc, b: &u8| acc + b.count_ones() as u64);
+    let zeros = txt
+        .iter()
+        .fold(0u64, |acc, b: &u8| acc + b.count_zeros() as u64);
     (ones, zeros)
 }
 
@@ -104,6 +107,9 @@ async fn app_three() -> Result<()> {
         total_zeros += zeros;
     }
 
-    info!("Ratio of ones/zeros: {:.02}",total_ones as f64 / total_zeros as f64);
+    info!(
+        "Ratio of ones/zeros: {:.02}",
+        total_ones as f64 / total_zeros as f64
+    );
     Ok(())
 }
