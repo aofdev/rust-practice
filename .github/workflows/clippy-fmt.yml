@@ -28,9 +28,6 @@ jobs:
   job_runner:
     runs-on: ubuntu-latest
     name: Lint folder (${{ matrix.job }})
-    defaults:
-      run:
-        working-directory: ${{ matrix.job }}
     needs: check_folders
     strategy:
       max-parallel: 2
@@ -39,8 +36,9 @@ jobs:
       - uses: actions/checkout@v2
       - name: run Lint folder
         run: echo ${{ matrix.job }}
+        working-directory: ${{ matrix.job }}
 
-      - name: Install Rust
+      - name: Install Rust with rustfmt and clippy
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
