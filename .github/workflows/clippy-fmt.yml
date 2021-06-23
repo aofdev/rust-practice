@@ -33,26 +33,15 @@ jobs:
       max-parallel: 3
       matrix: ${{ fromJson(needs.check_folders.outputs.run_job) }}
     steps:
-      - uses: actions/checkout@v2
-      - name: Install Rust with rustfmt and clippy
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          override: true
-          components: rustfmt, clippy
+      - name: Checkout code
+        uses: actions/checkout@v2
 
       - name: Check with rustfmt
-        uses: actions-rs/cargo@v1
+        run: cargo fmt --all -- --check
         working-directory: ${{ matrix.job }}
-        run: echo Check with rustfmt ${{ matrix.job }}
-        with:
-          command: fmt
-          args: --all -- --check
 
       - name: Check with Clippy
         uses: actions-rs/clippy-check@v1
-        working-directory: ${{ matrix.job }}
-        run: echo Check with Clippy ${{ matrix.job }}
         with:
           token: ${{ secrets.GIT_TOKEN }}
-          args: --workspace --tests --all-features
+          args: --workspace --tests --all-features --manifest-path ${{ matrix.job }}/Cargo.toml
