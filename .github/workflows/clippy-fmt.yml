@@ -7,34 +7,52 @@ on:
     branches: ["**"]
 
 jobs:
-  fmt:
+  check_folders:
     runs-on: ubuntu-latest
+    name: Check folders
+    outputs:
+      run_job: ${{ steps.list_folders.outputs.run_job }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: List folders
+        id: list_folders
+        run: |
+          cd job
+          JOBS=$(for file in $(ls -d */); do
+            jq -n --arg job "$file" '{job: $job}'
+          done | \
+          jq -cMn '.include |= [inputs]')
+          echo "::set-output name=run_job::$JOBS"
+  
+  job_runner:
+    runs-on: ubuntu-latest
+    name: Lint folder (${{ matrix.job }})
+    defaults:
+      run:
+        working-directory: ${{ matrix.job }}
+    needs: check_folders
+    strategy:
+      max-parallel: 2
+      matrix: ${{ fromJson(needs.check_folders.outputs.run_job) }}
     steps:
       - uses: actions/checkout@v2
+      - name: run Lint folder
+        run: echo ${{ matrix.job }}
 
       - name: Install Rust
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
-          components: rustfmt
+          override: true
+          components: rustfmt, clippy
 
       - name: Check with rustfmt
         uses: actions-rs/cargo@v1
         with:
           command: fmt
           args: --all -- --check
-
-  clippy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Install Rust
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          components: clippy
-          override: true
 
       - name: Check with Clippy
         uses: actions-rs/clippy-check@v1
