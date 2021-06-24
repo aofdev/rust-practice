@@ -3,7 +3,7 @@
 // mod enums;
 // mod functions;
 // mod loops;
-mod generic_bounds;
+// mod generic_bounds;
 // mod ownership_borrowing;
 // mod pointer_ref;
 // mod strings;
@@ -12,6 +12,7 @@ mod generic_bounds;
 // mod types;
 // mod vars;
 // mod vectors;
+mod macro_rules;
 
 fn main() {
     // vars::run();
@@ -27,5 +28,6 @@ fn main() {
     // structs::run();
     // pointer_ref::run();
     // ownership_borrowing::run();
-    generic_bounds::run();
+    // generic_bounds::run();
+    macro_rules::run();
 }
