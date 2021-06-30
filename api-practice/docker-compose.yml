@@ -1,0 +1,15 @@
+version: '3.9'
+services:
+  pg:
+    image: postgres:13-alpine
+    command:
+      - 'postgres'
+      - '-c'
+      - 'max_connections=100'
+      - '-c'
+      - 'shared_buffers=256MB'
+    environment:
+      POSTGRES_PASSWORD: 9EfSjEPqwJ4uxS3CMGpcztdXjHdW8QdW
+    ports:
+      - 5433:5432
+    restart: always
