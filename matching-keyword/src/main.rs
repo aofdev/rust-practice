@@ -10,9 +10,9 @@ use aho_corasick::{AhoCorasick, AhoCorasickBuilder};
 
 #[derive(Debug, Serialize, Deserialize)]
 struct Patterns {
-    pub include: Vec<String>,
-    pub name: String,
-    pub exclude: Vec<String>,
+    include: Vec<String>,
+    name: String,
+    exclude: Vec<String>,
 }
 
 fn parse_json(path_json: &str) -> Result<Patterns> {
@@ -98,25 +98,114 @@ fn main() {
         exclude: res.exclude,
         name: res.name,
     };
-    let (patterns_include_one_condition, patterns_include_multiple_condition) =
+    let (patterns_include_condition, patterns_include_multiple_condition) =
         filter_condition(patterns.include);
-    let (patterns_exclude_one_condition, patterns_exclude_multiple_condition) =
+    let (patterns_exclude_condition, patterns_exclude_multiple_condition) =
         filter_condition(patterns.exclude);
 
     // init aho
-    let ac_patterns_include_one_condition = generator_aho_match(patterns_include_one_condition);
-    let ac_patterns_exclude_one_condition = generator_aho_match(patterns_exclude_one_condition);
+    let ac_patterns_include_condition = generator_aho_match(patterns_include_condition);
+    let ac_patterns_exclude_condition = generator_aho_match(patterns_exclude_condition);
 
-    assert_eq!(true, is_match(ac_patterns_exclude_one_condition, &message));
+    assert_eq!(true, is_match(ac_patterns_exclude_condition, &message));
     assert_eq!(
         true,
         run_match_multiple_condition(patterns_exclude_multiple_condition, &message)
     );
 
-    assert_eq!(true, is_match(ac_patterns_include_one_condition, &message));
+    assert_eq!(true, is_match(ac_patterns_include_condition, &message));
 
     assert_eq!(
         true,
         run_match_multiple_condition(patterns_include_multiple_condition, &message)
     );
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_filter_condition() {
+        let dummy = vec![
+            "test".to_string(),
+            "home".to_string(),
+            "word+key".to_string(),
+        ];
+        let result = filter_condition(dummy);
+        assert_eq!(
+            (
+                vec!["test".to_string(), "home".to_string()],
+                vec![vec!["word".to_string(), "key".to_string()]]
+            ),
+            result
+        );
+    }
+
+    #[test]
+    fn test_is_any_true() {
+        // Case true
+        let dummy = vec![false, false, true];
+        let result = is_any_true(&dummy);
+        assert_eq!(true, result);
+
+        // Case false:
+        let dummy = vec![false, false, false];
+        let result = is_any_true(&dummy);
+        assert_eq!(false, result);
+    }
+
+    #[test]
+    fn test_is_match() {
+        let message = "hello test home";
+
+        // Case found
+        let dummy = vec!["test".to_string(), "home".to_string(), "word".to_string()];
+        let mock_fn = generator_aho_match(dummy);
+        let result = is_match(mock_fn, &message);
+        assert_eq!(true, result);
+
+        // Case not found
+        let dummy = vec!["word".to_string()];
+        let mock_fn = generator_aho_match(dummy);
+        let result = is_match(mock_fn, &message);
+        assert_eq!(false, result);
+    }
+
+    #[test]
+    fn test_is_match_multiple_condition() {
+        let message = "hello test home";
+
+        // Case match all
+        let dummy = vec!["test".to_string(), "home".to_string()];
+        let mock_fn = generator_aho_match(dummy.clone());
+        let result = is_match_multiple_condition(mock_fn, dummy.len(), &message);
+        assert_eq!(true, result);
+
+        // Case some match
+        let dummy = vec!["store".to_string(), "home".to_string()];
+        let mock_fn = generator_aho_match(dummy.clone());
+        let result = is_match_multiple_condition(mock_fn, dummy.len(), &message);
+        assert_eq!(false, result);
+    }
+
+    #[test]
+    fn test_run_match_multiple_condition() {
+        let message = "hello key word";
+        // Case found
+        let dummy = vec![
+            vec!["book".to_string(), "monitor".to_string()],
+            vec!["key".to_string(), "hello".to_string()],
+        ];
+        let result = run_match_multiple_condition(dummy, &message);
+        assert_eq!(true, result);
+
+        // Case not match all
+        let dummy = vec![
+            vec!["book2".to_string(), "monitor2".to_string()],
+            vec!["key1".to_string(), "hello1".to_string()],
+        ];
+        let result = run_match_multiple_condition(dummy, &message);
+        assert_eq!(false, result);
+    }
 }
