@@ -1,4 +1,5 @@
 use aho_corasick::{AhoCorasick, AhoCorasickBuilder};
+use rayon::prelude::*;
 use std::io;
 use std::str;
 
@@ -18,6 +19,18 @@ pub fn is_match(ac: AhoCorasick, text: &str) -> bool {
 }
 
 #[allow(dead_code)]
+pub fn is_match_contains(patterns: Vec<String>, text: &str) -> bool {
+    let matches: Vec<bool> = patterns.iter().map(|t| text.contains(t)).collect();
+    is_any_true(&matches)
+}
+
+#[allow(dead_code)]
+pub fn is_match_contains_with_rayon(patterns: Vec<String>, text: &str) -> bool {
+    let matches: Vec<bool> = patterns.par_iter().map(|t| text.contains(t)).collect();
+    is_any_true(&matches)
+}
+
+#[allow(dead_code)]
 pub fn is_match_with_bytes<R: io::Read>(ac: AhoCorasick, bytes_io: R) -> bool {
     ac.stream_find_iter(bytes_io).count() != 0
 }
@@ -30,6 +43,17 @@ pub fn is_match_multiple_condition(ac: AhoCorasick, total_pattern: usize, text: 
 pub fn run_match_multiple_condition(patterns: Vec<Vec<String>>, text: &str) -> bool {
     let matches: Vec<bool> = patterns
         .iter()
+        .map(|p| {
+            is_match_multiple_condition(generator_aho_match(p.to_vec()), p.to_vec().len(), text)
+        })
+        .collect();
+    is_any_true(&matches)
+}
+
+#[allow(dead_code)]
+pub fn run_match_multiple_condition_with_rayon(patterns: Vec<Vec<String>>, text: &str) -> bool {
+    let matches: Vec<bool> = patterns
+        .par_iter()
         .map(|p| {
             is_match_multiple_condition(generator_aho_match(p.to_vec()), p.to_vec().len(), text)
         })
@@ -68,6 +92,21 @@ mod tests {
         let dummy = vec!["word".to_string()];
         let mock_fn = generator_aho_match(dummy);
         let result = is_match(mock_fn, &message);
+        assert_eq!(false, result);
+    }
+
+    #[test]
+    fn test_is_match_contains() {
+        let message = "hello test home สวัสดีวันนี้อากาศร้อน123456789+*-)(~`~)@{.,}??<>$$##&|!/✆⍟🎉😆🇹🇭🇺🇸🧪🪐👩‍🚀❤️🔒 #me";
+
+        // Case found
+        let dummy = vec!["test".to_string(), "home".to_string(), "word".to_string()];
+        let result = is_match_contains(dummy, &message);
+        assert_eq!(true, result);
+
+        // Case not found
+        let dummy = vec!["word".to_string()];
+        let result = is_match_contains(dummy, &message);
         assert_eq!(false, result);
     }
 
