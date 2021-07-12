@@ -1,5 +1,6 @@
 use aho_corasick::{AhoCorasick, AhoCorasickBuilder};
 use rayon::prelude::*;
+use regex::Regex;
 use std::io;
 use std::str;
 
@@ -13,6 +14,16 @@ pub fn generator_aho_match(patterns: Vec<String>) -> AhoCorasick {
         .build(&*patterns)
 }
 
+#[allow(dead_code)]
+pub fn generator_regex(pattern: &str) -> Regex {
+    Regex::new(&pattern).unwrap()
+}
+
+#[allow(dead_code)]
+pub fn generator_regex_with_condition(patterns: Vec<String>) -> String {
+    format!("{}", patterns.join("|"))
+}
+
 pub fn is_match(ac: AhoCorasick, text: &str) -> bool {
     let matches: Vec<usize> = ac.find_iter(text).map(|mat| mat.pattern()).collect();
     !matches.is_empty()
@@ -22,6 +33,16 @@ pub fn is_match(ac: AhoCorasick, text: &str) -> bool {
 pub fn is_match_contains(patterns: Vec<String>, text: &str) -> bool {
     let matches: Vec<bool> = patterns.iter().map(|t| text.contains(t)).collect();
     is_any_true(&matches)
+}
+
+#[allow(dead_code)]
+pub fn is_match_regex(rg: &Regex, text: &str) -> bool {
+    rg.is_match(&text)
+}
+
+#[allow(dead_code)]
+pub fn is_match_all_regex(rg: &Regex, total_pattern: usize, text: &str) -> bool {
+    rg.captures_iter(&text).count() == total_pattern
 }
 
 #[allow(dead_code)]
@@ -64,6 +85,49 @@ pub fn run_match_multiple_condition_with_rayon(patterns: Vec<Vec<String>>, text:
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_generator_regex_with_condition() {
+        let dummy = vec!["test".to_string(), "home".to_string(), "word".to_string()];
+        let actual = generator_regex_with_condition(dummy);
+        assert_eq!("test|home|word", actual)
+    }
+
+    #[test]
+    fn test_is_match_regex_one_condition() {
+        let message = "hello test home สวัสดีวันนี้อากาศร้อน123456789+*-)(~`~)@{.,}??<>$$##&|!/✆⍟🎉😆🇹🇭🇺🇸🧪🪐👩‍🚀❤️🔒 #me";
+
+        // Case found
+        let pattern = "test|home|word";
+        let rg = generator_regex(pattern);
+        let actual = is_match_regex(&rg, &message);
+        assert_eq!(true, actual);
+
+        // Case not found
+        let pattern = "word";
+        let rg = generator_regex(pattern);
+        let actual = is_match_regex(&rg, &message);
+        assert_eq!(false, actual);
+    }
+
+    #[test]
+    fn test_is_match_regex_multiple_condition() {
+        let message = "hello test home สวัสดีวันนี้อากาศร้อน123456789+*-)(~`~)@{.,}??<>$$##&|!/✆⍟🎉😆🇹🇭🇺🇸🧪🪐👩‍🚀❤️🔒 #me";
+
+        // Case found
+        let pattern = "test|home|123|hello|สวัสดี|789";
+        let total_pattern = 6;
+        let rg = generator_regex(pattern);
+        let actual = is_match_all_regex(&rg, total_pattern, &message);
+        assert_eq!(true, actual);
+
+        // Case not found
+        let pattern = "test|word";
+        let total_pattern = 2;
+        let rg = generator_regex(pattern);
+        let actual = is_match_all_regex(&rg, total_pattern, &message);
+        assert_eq!(false, actual);
+    }
 
     #[test]
     fn test_is_any_true() {
