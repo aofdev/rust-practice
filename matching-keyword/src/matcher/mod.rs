@@ -32,8 +32,7 @@ pub fn is_match_contains(patterns: &Vec<String>, text: &str) -> bool {
 }
 
 pub fn is_match_all_contains(patterns: &Vec<String>, total_pattern: &usize, text: &str) -> bool {
-    let matches: Vec<bool> = patterns.iter().map(|t| text.contains(t)).collect();
-    matches.len() == *total_pattern
+    patterns.iter().filter(|&t| text.contains(t)).count() == *total_pattern
 }
 
 pub fn is_match_regex(rg: &Regex, text: &str) -> bool {
@@ -70,9 +69,7 @@ pub fn run_match_multiple_condition(patterns: &Vec<Vec<String>>, text: &str) -> 
 pub fn run_match_multiple_condition_with_rayon(patterns: &Vec<Vec<String>>, text: &str) -> bool {
     let matches: Vec<bool> = patterns
         .par_iter()
-        .map(|p| {
-            is_match_multiple_condition(&generator_aho_match(&p.to_vec()), &p.to_vec().len(), text)
-        })
+        .map(|p| is_match_all_contains(&p.to_vec(), &p.to_vec().len(), &text))
         .collect();
     is_any_true(&matches)
 }
@@ -171,6 +168,24 @@ mod tests {
         // Case not found
         let dummy = vec!["word".to_string()];
         let result = is_match_contains(&dummy, &message);
+        assert_eq!(false, result);
+    }
+
+    #[test]
+    fn test_is_match_all_contains() {
+        let message = "hello test home สวัสดีวันนี้อากาศร้อน123456789+*-)(~`~)@{.,}??<>$$##&|!/✆⍟🎉😆🇹🇭🇺🇸🧪🪐👩‍🚀❤️🔒 #me";
+
+        // Case found
+        let dummy = vec!["test".to_string(), "home".to_string(), "hello".to_string()];
+        let total_pattern = 3;
+        let result = is_match_all_contains(&dummy, &total_pattern, &message);
+        println!("{:?}", &result);
+        assert_eq!(true, result);
+
+        // Case not found
+        let dummy = vec!["word".to_string()];
+        let total_pattern = 1;
+        let result = is_match_all_contains(&dummy, &total_pattern, &message);
         assert_eq!(false, result);
     }
 

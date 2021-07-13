@@ -106,6 +106,7 @@ impl MockData {
 
 fn criterion_benchmark(c: &mut Criterion) {
     let pattern = MockData::new().pattern;
+    let pattern_nested = MockData::new().pattern_nested;
     let mut data_tests = HashMap::new();
     data_tests.insert("short_text", MockData::new().short_text);
     data_tests.insert("normal_text", MockData::new().text);
@@ -148,26 +149,22 @@ fn criterion_benchmark(c: &mut Criterion) {
             })
         });
     }
-
     group.finish();
 
-    // c.bench_function("run_match_multiple_condition", |b| {
-    //     b.iter(|| {
-    //         matcher::run_match_multiple_condition(
-    //             pattern_nested,
-    //             &MockData::new().text,
-    //         )
-    //     })
-    // });
+    let mut group = c.benchmark_group("Matcher multiple condition");
+    for (key, value) in data_tests.iter() {
+        group.bench_function(format!("run_match_multiple_condition with {}", key), |b| {
+            b.iter(|| matcher::run_match_multiple_condition(&pattern_nested, &value))
+        });
 
-    // c.bench_function("run_match_multiple_condition_with_rayon", |b| {
-    //     b.iter(|| {
-    //         matcher::run_match_multiple_condition_with_rayon(
-    //             pattern_nested,
-    //             &MockData::new().text,
-    //         )
-    //     })
-    // });
+        group.bench_function(
+            format!("run_match_multiple_condition_with_rayon with {}", key),
+            |b| {
+                b.iter(|| matcher::run_match_multiple_condition_with_rayon(&pattern_nested, &value))
+            },
+        );
+    }
+    group.finish();
 }
 
 criterion_group!(benches, criterion_benchmark);
