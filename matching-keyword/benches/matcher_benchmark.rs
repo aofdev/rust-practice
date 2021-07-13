@@ -1,4 +1,5 @@
-use criterion::{criterion_group, criterion_main, Criterion};
+use criterion::{criterion_group, criterion_main, Criterion, Throughput};
+use std::collections::HashMap;
 use std::io;
 
 #[path = "../src/matcher/mod.rs"]
@@ -104,146 +105,71 @@ impl MockData {
 }
 
 fn criterion_benchmark(c: &mut Criterion) {
-    c.bench_function("is_match aho_corasick with short text", |b| {
-        b.iter(|| {
-            matcher::is_match(
-                matcher::generator_aho_match(MockData::new().pattern),
-                &MockData::new().short_text,
-            )
-        })
-    });
+    let pattern = MockData::new().pattern;
+    let mut data_tests = HashMap::new();
+    data_tests.insert("short_text", MockData::new().short_text);
+    data_tests.insert("normal_text", MockData::new().text);
+    data_tests.insert("long_text", MockData::new().long_text);
 
-    c.bench_function("is_match aho_corasick with normal text", |b| {
-        b.iter(|| {
-            matcher::is_match(
-                matcher::generator_aho_match(MockData::new().pattern),
-                &MockData::new().text,
-            )
-        })
-    });
+    let mut group = c.benchmark_group("Matcher");
 
-    c.bench_function("is_match aho_corasick with long text", |b| {
-        b.iter(|| {
-            matcher::is_match(
-                matcher::generator_aho_match(MockData::new().pattern),
-                &MockData::new().long_text,
-            )
-        })
-    });
+    for (key, value) in data_tests.iter() {
+        // group.throughput(Throughput::Bytes(value.as_bytes()));
+        group.bench_function(format!("is_match aho_corasick with {}", &key), |b| {
+            b.iter(|| matcher::is_match(matcher::generator_aho_match(pattern.clone()), &value))
+        });
 
-    c.bench_function("is_match_contains with short text", |b| {
-        b.iter(|| matcher::is_match_contains(MockData::new().pattern, &MockData::new().short_text))
-    });
+        group.bench_function(format!("is_match_contains with {}", &key), |b| {
+            b.iter(|| matcher::is_match_contains(pattern.clone(), &value))
+        });
 
-    c.bench_function("is_match_contains with normal text", |b| {
-        b.iter(|| matcher::is_match_contains(MockData::new().pattern, &MockData::new().text))
-    });
+        group.bench_function(format!("is_match_contains_with_rayon with {}", &key), |b| {
+            b.iter(|| matcher::is_match_contains_with_rayon(pattern.clone(), &value))
+        });
 
-    c.bench_function("is_match_contains with long text", |b| {
-        b.iter(|| matcher::is_match_contains(MockData::new().pattern, &MockData::new().long_text))
-    });
+        group.bench_function(
+            format!("is_match_with_bytes aho_corasick with {}", &key),
+            |b| {
+                b.iter(|| {
+                    matcher::is_match_with_bytes(
+                        matcher::generator_aho_match(pattern.clone()),
+                        io::BufReader::with_capacity(1, value.as_bytes()),
+                    )
+                })
+            },
+        );
 
-    c.bench_function("is_match_contains_with_rayon with short text", |b| {
-        b.iter(|| {
-            matcher::is_match_contains_with_rayon(
-                MockData::new().pattern,
-                &MockData::new().short_text,
-            )
-        })
-    });
+        group.bench_function(format!("is_match_regex with {}", &key), |b| {
+            b.iter(|| {
+                matcher::is_match_regex(
+                    &matcher::generator_regex(&matcher::generator_regex_with_condition(
+                        pattern.clone(),
+                    )),
+                    &value,
+                )
+            })
+        });
+    }
 
-    c.bench_function("is_match_contains_with_rayon with normal text", |b| {
-        b.iter(|| {
-            matcher::is_match_contains_with_rayon(MockData::new().pattern, &MockData::new().text)
-        })
-    });
+    group.finish();
 
-    c.bench_function("is_match_contains_with_rayon with long text", |b| {
-        b.iter(|| {
-            matcher::is_match_contains_with_rayon(
-                MockData::new().pattern,
-                &MockData::new().long_text,
-            )
-        })
-    });
+    // c.bench_function("run_match_multiple_condition", |b| {
+    //     b.iter(|| {
+    //         matcher::run_match_multiple_condition(
+    //             pattern_nested,
+    //             &MockData::new().text,
+    //         )
+    //     })
+    // });
 
-    c.bench_function("is_match_with_bytes with short text", |b| {
-        b.iter(|| {
-            matcher::is_match_with_bytes(
-                matcher::generator_aho_match(MockData::new().pattern),
-                io::BufReader::with_capacity(1, MockData::new().short_text.as_bytes()),
-            )
-        })
-    });
-
-    c.bench_function("is_match_with_bytes with normal text", |b| {
-        b.iter(|| {
-            matcher::is_match_with_bytes(
-                matcher::generator_aho_match(MockData::new().pattern),
-                io::BufReader::with_capacity(1, MockData::new().text.as_bytes()),
-            )
-        })
-    });
-
-    c.bench_function("is_match_with_bytes with long text", |b| {
-        b.iter(|| {
-            matcher::is_match_with_bytes(
-                matcher::generator_aho_match(MockData::new().pattern),
-                io::BufReader::with_capacity(1, MockData::new().long_text.as_bytes()),
-            )
-        })
-    });
-
-    c.bench_function("is_match_regex with short text", |b| {
-        b.iter(|| {
-            matcher::is_match_regex(
-                &matcher::generator_regex(&matcher::generator_regex_with_condition(
-                    MockData::new().pattern,
-                )),
-                &MockData::new().short_text,
-            )
-        })
-    });
-
-    c.bench_function("is_match_regex with normal text", |b| {
-        b.iter(|| {
-            matcher::is_match_regex(
-                &matcher::generator_regex(&matcher::generator_regex_with_condition(
-                    MockData::new().pattern,
-                )),
-                &MockData::new().text,
-            )
-        })
-    });
-
-    c.bench_function("is_match_regex with long text", |b| {
-        b.iter(|| {
-            matcher::is_match_regex(
-                &matcher::generator_regex(&matcher::generator_regex_with_condition(
-                    MockData::new().pattern,
-                )),
-                &MockData::new().long_text,
-            )
-        })
-    });
-
-    c.bench_function("run_match_multiple_condition", |b| {
-        b.iter(|| {
-            matcher::run_match_multiple_condition(
-                MockData::new().pattern_nested,
-                &MockData::new().text,
-            )
-        })
-    });
-
-    c.bench_function("run_match_multiple_condition_with_rayon", |b| {
-        b.iter(|| {
-            matcher::run_match_multiple_condition_with_rayon(
-                MockData::new().pattern_nested,
-                &MockData::new().text,
-            )
-        })
-    });
+    // c.bench_function("run_match_multiple_condition_with_rayon", |b| {
+    //     b.iter(|| {
+    //         matcher::run_match_multiple_condition_with_rayon(
+    //             pattern_nested,
+    //             &MockData::new().text,
+    //         )
+    //     })
+    // });
 }
 
 criterion_group!(benches, criterion_benchmark);
