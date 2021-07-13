@@ -116,15 +116,15 @@ fn criterion_benchmark(c: &mut Criterion) {
     for (key, value) in data_tests.iter() {
         // group.throughput(Throughput::Bytes(value.as_bytes()));
         group.bench_function(format!("is_match aho_corasick with {}", &key), |b| {
-            b.iter(|| matcher::is_match(matcher::generator_aho_match(pattern.clone()), &value))
+            b.iter(|| matcher::is_match(&matcher::generator_aho_match(&pattern), &value))
         });
 
         group.bench_function(format!("is_match_contains with {}", &key), |b| {
-            b.iter(|| matcher::is_match_contains(pattern.clone(), &value))
+            b.iter(|| matcher::is_match_contains(&pattern, &value))
         });
 
         group.bench_function(format!("is_match_contains_with_rayon with {}", &key), |b| {
-            b.iter(|| matcher::is_match_contains_with_rayon(pattern.clone(), &value))
+            b.iter(|| matcher::is_match_contains_with_rayon(&pattern, &value))
         });
 
         group.bench_function(
@@ -132,7 +132,7 @@ fn criterion_benchmark(c: &mut Criterion) {
             |b| {
                 b.iter(|| {
                     matcher::is_match_with_bytes(
-                        matcher::generator_aho_match(pattern.clone()),
+                        &matcher::generator_aho_match(&pattern),
                         io::BufReader::with_capacity(1, value.as_bytes()),
                     )
                 })
@@ -142,9 +142,7 @@ fn criterion_benchmark(c: &mut Criterion) {
         group.bench_function(format!("is_match_regex with {}", &key), |b| {
             b.iter(|| {
                 matcher::is_match_regex(
-                    &matcher::generator_regex(&matcher::generator_regex_with_condition(
-                        pattern.clone(),
-                    )),
+                    &matcher::generator_regex(&matcher::generator_regex_with_condition(&pattern)),
                     &value,
                 )
             })

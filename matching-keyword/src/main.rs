@@ -76,27 +76,27 @@ fn main() {
         filter_condition(patterns.exclude);
 
     // init aho
-    let ac_patterns_include_condition = matcher::generator_aho_match(patterns_include_condition);
-    let ac_patterns_exclude_condition = matcher::generator_aho_match(patterns_exclude_condition);
+    let ac_patterns_include_condition = matcher::generator_aho_match(&patterns_include_condition);
+    let ac_patterns_exclude_condition = matcher::generator_aho_match(&patterns_exclude_condition);
 
-    assert_eq!(
-        true,
-        matcher::is_match(ac_patterns_exclude_condition, &message)
-    );
-    assert_eq!(
-        true,
-        matcher::run_match_multiple_condition(patterns_exclude_multiple_condition, &message)
-    );
+    // assert_eq!(
+    //     true,
+    //     matcher::is_match(ac_patterns_exclude_condition, &message)
+    // );
+    // assert_eq!(
+    //     true,
+    //     matcher::run_match_multiple_condition(patterns_exclude_multiple_condition, &message)
+    // );
 
-    assert_eq!(
-        true,
-        matcher::is_match(ac_patterns_include_condition, &message)
-    );
+    // assert_eq!(
+    //     true,
+    //     matcher::is_match(ac_patterns_include_condition, &message)
+    // );
 
-    assert_eq!(
-        true,
-        matcher::run_match_multiple_condition(patterns_include_multiple_condition, &message)
-    );
+    // assert_eq!(
+    //     true,
+    //     matcher::run_match_multiple_condition(patterns_include_multiple_condition, &message)
+    // );
 }
 
 #[cfg(test)]
