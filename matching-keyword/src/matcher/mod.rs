@@ -14,12 +14,10 @@ pub fn generator_aho_match(patterns: &Vec<String>) -> AhoCorasick {
         .build(&*patterns)
 }
 
-#[allow(dead_code)]
 pub fn generator_regex(pattern: &str) -> Regex {
     Regex::new(&pattern).unwrap()
 }
 
-#[allow(dead_code)]
 pub fn generator_regex_with_condition(patterns: &Vec<String>) -> String {
     format!("{}", patterns.join("|"))
 }
@@ -29,29 +27,27 @@ pub fn is_match(ac: &AhoCorasick, text: &str) -> bool {
     !matches.is_empty()
 }
 
-#[allow(dead_code)]
 pub fn is_match_contains(patterns: &Vec<String>, text: &str) -> bool {
-    let matches: Vec<bool> = patterns.iter().map(|t| text.contains(t)).collect();
-    is_any_true(&matches)
+    patterns.iter().any(|t| text.contains(t))
 }
 
-#[allow(dead_code)]
+pub fn is_match_all_contains(patterns: &Vec<String>, total_pattern: &usize, text: &str) -> bool {
+    let matches: Vec<bool> = patterns.iter().map(|t| text.contains(t)).collect();
+    matches.len() == *total_pattern
+}
+
 pub fn is_match_regex(rg: &Regex, text: &str) -> bool {
     rg.is_match(&text)
 }
 
-#[allow(dead_code)]
 pub fn is_match_all_regex(rg: &Regex, total_pattern: &usize, text: &str) -> bool {
     rg.captures_iter(&text).count() == *total_pattern
 }
 
-#[allow(dead_code)]
 pub fn is_match_contains_with_rayon(patterns: &Vec<String>, text: &str) -> bool {
-    let matches: Vec<bool> = patterns.par_iter().map(|t| text.contains(t)).collect();
-    is_any_true(&matches)
+    patterns.par_iter().any(|t| text.contains(t))
 }
 
-#[allow(dead_code)]
 pub fn is_match_with_bytes<R: io::Read>(ac: &AhoCorasick, bytes_io: R) -> bool {
     ac.stream_find_iter(bytes_io).count() != 0
 }
