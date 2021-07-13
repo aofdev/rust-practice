@@ -71,7 +71,6 @@ pub fn run_match_multiple_condition(patterns: &Vec<Vec<String>>, text: &str) -> 
     is_any_true(&matches)
 }
 
-#[allow(dead_code)]
 pub fn run_match_multiple_condition_with_rayon(patterns: &Vec<Vec<String>>, text: &str) -> bool {
     let matches: Vec<bool> = patterns
         .par_iter()
@@ -82,9 +81,10 @@ pub fn run_match_multiple_condition_with_rayon(patterns: &Vec<Vec<String>>, text
     is_any_true(&matches)
 }
 
-// pub fn matcher<T>(patterns: &Vec<T>, text: &str) -> bool {
-//     if is_match_contains(patterns, &text) {}
-// }
+pub fn execute(patterns: &Vec<String>, patterns_nested: &Vec<Vec<String>>, text: &str) -> bool {
+    is_match_contains(&patterns, &text)
+        || run_match_multiple_condition_with_rayon(&patterns_nested, &text)
+}
 
 #[cfg(test)]
 mod tests {
@@ -230,5 +230,44 @@ mod tests {
         ];
         let result = run_match_multiple_condition(&dummy, &message);
         assert_eq!(false, result);
+    }
+
+    #[test]
+    fn test_execute() {
+        let message = "hello test home monitor book สวัสดีวันนี้อากาศร้อน123456789+*-)(~`~)@{.,}??<>$$##&|!/✆⍟🎉😆🇹🇭🇺🇸🧪🪐👩‍🚀❤️🔒 #me";
+        // Case patterns normal found
+        let patterns_dummy = vec!["test".to_string(), "home".to_string(), "word2".to_string()];
+        let patterns_nested_dummy = vec![
+            vec!["book1".to_string(), "monitor1".to_string()],
+            vec!["test1".to_string(), "hello1".to_string()],
+        ];
+        let actual = execute(&patterns_dummy, &patterns_nested_dummy, &message);
+        assert_eq!(true, actual);
+
+        // Case patterns nested found
+        let patterns_dummy = vec![
+            "test11".to_string(),
+            "home11".to_string(),
+            "word11".to_string(),
+        ];
+        let patterns_nested_dummy = vec![
+            vec!["book".to_string(), "monitor".to_string()],
+            vec!["test2".to_string(), "hello2".to_string()],
+        ];
+        let actual = execute(&patterns_dummy, &patterns_nested_dummy, &message);
+        assert_eq!(true, actual);
+
+        // Case not found
+        let patterns_dummy = vec![
+            "test00".to_string(),
+            "home00".to_string(),
+            "word00".to_string(),
+        ];
+        let patterns_nested_dummy = vec![
+            vec!["book00".to_string(), "monitor00".to_string()],
+            vec!["test00".to_string(), "hello00".to_string()],
+        ];
+        let actual = execute(&patterns_dummy, &patterns_nested_dummy, &message);
+        assert_eq!(false, actual);
     }
 }
