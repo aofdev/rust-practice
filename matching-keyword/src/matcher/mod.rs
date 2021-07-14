@@ -27,8 +27,24 @@ pub fn is_match(ac: &AhoCorasick, text: &str) -> bool {
     !matches.is_empty()
 }
 
+pub fn is_match_with_bytes<R: io::Read>(ac: &AhoCorasick, bytes_io: R) -> bool {
+    ac.stream_find_iter(bytes_io).count() != 0
+}
+
+pub fn is_match_matches(patterns: &Vec<String>, text: &str) -> bool {
+    patterns.iter().any(|t| text.matches(t).count() != 0)
+}
+
+pub fn is_match_find(patterns: &Vec<String>, text: &str) -> bool {
+    patterns.iter().any(|t| text.find(t).is_some())
+}
+
 pub fn is_match_contains(patterns: &Vec<String>, text: &str) -> bool {
     patterns.iter().any(|t| text.contains(t))
+}
+
+pub fn is_match_contains_with_rayon(patterns: &Vec<String>, text: &str) -> bool {
+    patterns.par_iter().any(|t| text.contains(t))
 }
 
 pub fn is_match_all_contains(patterns: &Vec<String>, total_pattern: &usize, text: &str) -> bool {
@@ -43,40 +59,25 @@ pub fn is_match_all_regex(rg: &Regex, total_pattern: &usize, text: &str) -> bool
     rg.captures_iter(&text).count() == *total_pattern
 }
 
-pub fn is_match_contains_with_rayon(patterns: &Vec<String>, text: &str) -> bool {
-    patterns.par_iter().any(|t| text.contains(t))
-}
-
-pub fn is_match_with_bytes<R: io::Read>(ac: &AhoCorasick, bytes_io: R) -> bool {
-    ac.stream_find_iter(bytes_io).count() != 0
-}
-
 pub fn is_match_multiple_condition(ac: &AhoCorasick, total_pattern: &usize, text: &str) -> bool {
     let matches: Vec<usize> = ac.find_iter(text).map(|mat| mat.pattern()).collect();
     matches.len() == *total_pattern
 }
 
 pub fn run_match_multiple_condition(patterns: &Vec<Vec<String>>, text: &str) -> bool {
-    let matches: Vec<bool> = patterns
+    patterns
         .iter()
-        .map(|p| {
-            is_match_multiple_condition(&generator_aho_match(&p.to_vec()), &p.to_vec().len(), text)
-        })
-        .collect();
-    is_any_true(&matches)
+        .any(|p| is_match_all_contains(&p.to_vec(), &p.to_vec().len(), &text))
 }
 
 pub fn run_match_multiple_condition_with_rayon(patterns: &Vec<Vec<String>>, text: &str) -> bool {
-    let matches: Vec<bool> = patterns
+    patterns
         .par_iter()
-        .map(|p| is_match_all_contains(&p.to_vec(), &p.to_vec().len(), &text))
-        .collect();
-    is_any_true(&matches)
+        .any(|p| is_match_all_contains(&p.to_vec(), &p.to_vec().len(), &text))
 }
 
 pub fn execute(patterns: &Vec<String>, patterns_nested: &Vec<Vec<String>>, text: &str) -> bool {
-    is_match_contains(&patterns, &text)
-        || run_match_multiple_condition_with_rayon(&patterns_nested, &text)
+    is_match_contains(&patterns, &text) || run_match_multiple_condition(&patterns_nested, &text)
 }
 
 #[cfg(test)]
@@ -168,6 +169,36 @@ mod tests {
         // Case not found
         let dummy = vec!["word".to_string()];
         let result = is_match_contains(&dummy, &message);
+        assert_eq!(false, result);
+    }
+
+    #[test]
+    fn test_is_match_find() {
+        let message = "hello test home สวัสดีวันนี้อากาศร้อน123456789+*-)(~`~)@{.,}??<>$$##&|!/✆⍟🎉😆🇹🇭🇺🇸🧪🪐👩‍🚀❤️🔒 #me";
+
+        // Case found
+        let dummy = vec!["test".to_string(), "home".to_string(), "word".to_string()];
+        let result = is_match_find(&dummy, &message);
+        assert_eq!(true, result);
+
+        // Case not found
+        let dummy = vec!["word".to_string()];
+        let result = is_match_find(&dummy, &message);
+        assert_eq!(false, result);
+    }
+
+    #[test]
+    fn test_is_match_matches() {
+        let message = "hello test home สวัสดีวันนี้อากาศร้อน123456789+*-)(~`~)@{.,}??<>$$##&|!/✆⍟🎉😆🇹🇭🇺🇸🧪🪐👩‍🚀❤️🔒 #me";
+
+        // Case found
+        let dummy = vec!["test".to_string(), "home".to_string(), "word".to_string()];
+        let result = is_match_matches(&dummy, &message);
+        assert_eq!(true, result);
+
+        // Case not found
+        let dummy = vec!["word".to_string()];
+        let result = is_match_matches(&dummy, &message);
         assert_eq!(false, result);
     }
 

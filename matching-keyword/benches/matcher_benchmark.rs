@@ -1,4 +1,4 @@
-use criterion::{criterion_group, criterion_main, Criterion, Throughput};
+use criterion::{black_box, criterion_group, criterion_main, Criterion, Throughput};
 use std::collections::HashMap;
 use std::io;
 
@@ -105,42 +105,49 @@ impl MockData {
 }
 
 fn criterion_benchmark(c: &mut Criterion) {
-    let pattern = MockData::new().pattern;
-    let pattern_nested = MockData::new().pattern_nested;
+    let pattern = black_box(MockData::new().pattern);
+    let pattern_nested = black_box(MockData::new().pattern_nested);
     let mut data_tests = HashMap::new();
-    data_tests.insert("short_text", MockData::new().short_text);
-    data_tests.insert("normal_text", MockData::new().text);
-    data_tests.insert("long_text", MockData::new().long_text);
+    data_tests.insert("short_text", black_box(MockData::new().short_text));
+    data_tests.insert("normal_text", black_box(MockData::new().text));
+    data_tests.insert("long_text", black_box(MockData::new().long_text));
 
     let mut group = c.benchmark_group("Matcher");
 
     for (key, value) in data_tests.iter() {
-        // group.throughput(Throughput::Bytes(value.as_bytes()));
-        group.bench_function(format!("is_match aho_corasick with {}", &key), |b| {
+        group.throughput(Throughput::Bytes(
+            std::mem::size_of_val(&value as &str) as u64
+        ));
+        group.bench_function(format!("aho_corasick: {}", &key), |b| {
             b.iter(|| matcher::is_match(&matcher::generator_aho_match(&pattern), &value))
         });
 
-        group.bench_function(format!("is_match_contains with {}", &key), |b| {
+        group.bench_function(format!("aho_corasick_with_bytes: {}", &key), |b| {
+            b.iter(|| {
+                matcher::is_match_with_bytes(
+                    &matcher::generator_aho_match(&pattern),
+                    io::BufReader::with_capacity(1, value.as_bytes()),
+                )
+            })
+        });
+
+        group.bench_function(format!("contains: {}", &key), |b| {
             b.iter(|| matcher::is_match_contains(&pattern, &value))
         });
 
-        group.bench_function(format!("is_match_contains_with_rayon with {}", &key), |b| {
+        group.bench_function(format!("contains_with_rayon: {}", &key), |b| {
             b.iter(|| matcher::is_match_contains_with_rayon(&pattern, &value))
         });
 
-        group.bench_function(
-            format!("is_match_with_bytes aho_corasick with {}", &key),
-            |b| {
-                b.iter(|| {
-                    matcher::is_match_with_bytes(
-                        &matcher::generator_aho_match(&pattern),
-                        io::BufReader::with_capacity(1, value.as_bytes()),
-                    )
-                })
-            },
-        );
+        group.bench_function(format!("find: {}", &key), |b| {
+            b.iter(|| matcher::is_match_find(&pattern, &value))
+        });
 
-        group.bench_function(format!("is_match_regex with {}", &key), |b| {
+        group.bench_function(format!("matches: {}", &key), |b| {
+            b.iter(|| matcher::is_match_matches(&pattern, &value))
+        });
+
+        group.bench_function(format!("regex: {}", &key), |b| {
             b.iter(|| {
                 matcher::is_match_regex(
                     &matcher::generator_regex(&matcher::generator_regex_with_condition(&pattern)),
@@ -153,16 +160,16 @@ fn criterion_benchmark(c: &mut Criterion) {
 
     let mut group = c.benchmark_group("Matcher multiple condition");
     for (key, value) in data_tests.iter() {
-        group.bench_function(format!("run_match_multiple_condition with {}", key), |b| {
+        group.throughput(Throughput::Bytes(
+            std::mem::size_of_val(&value as &str) as u64
+        ));
+        group.bench_function(format!("{}", key), |b| {
             b.iter(|| matcher::run_match_multiple_condition(&pattern_nested, &value))
         });
 
-        group.bench_function(
-            format!("run_match_multiple_condition_with_rayon with {}", key),
-            |b| {
-                b.iter(|| matcher::run_match_multiple_condition_with_rayon(&pattern_nested, &value))
-            },
-        );
+        group.bench_function(format!("with rayon {}", key), |b| {
+            b.iter(|| matcher::run_match_multiple_condition_with_rayon(&pattern_nested, &value))
+        });
     }
     group.finish();
 }
