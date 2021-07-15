@@ -23,8 +23,7 @@ pub fn generator_regex_with_condition(patterns: &Vec<String>) -> String {
 }
 
 pub fn is_match(ac: &AhoCorasick, text: &str) -> bool {
-    let matches: Vec<usize> = ac.find_iter(text).map(|mat| mat.pattern()).collect();
-    !matches.is_empty()
+    ac.find_iter(text).count() != 0
 }
 
 pub fn is_match_with_bytes<R: io::Read>(ac: &AhoCorasick, bytes_io: R) -> bool {
