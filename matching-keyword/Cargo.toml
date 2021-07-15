@@ -14,7 +14,11 @@ rayon = "1.5"
 
 [dev-dependencies]
 criterion = "0.3"
+pprof = { version = "0.4", features = ["flamegraph", "criterion"] }
 
 [[bench]]
 name = "matcher_benchmark"
 harness = false
+
+[profile.bench]
+opt-level = 3
