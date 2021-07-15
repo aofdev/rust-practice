@@ -173,6 +173,17 @@ fn criterion_benchmark(c: &mut Criterion) {
         });
     }
     group.finish();
+
+    let mut group = c.benchmark_group("Matcher Execute");
+    for (key, value) in data_tests.iter() {
+        group.throughput(Throughput::Bytes(
+            std::mem::size_of_val(&value as &str) as u64
+        ));
+        group.bench_function(format!("{}", key), |b| {
+            b.iter(|| matcher::execute(&pattern, &pattern_nested, &value))
+        });
+    }
+    group.finish();
 }
 
 criterion_group! {
