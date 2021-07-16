@@ -57,6 +57,22 @@ fn split_condition(line: &str) -> Vec<String> {
     line.split("+").map(str::to_string).collect()
 }
 
+fn flatten_vector(nested_array: &Vec<Vec<String>>) -> Vec<String> {
+    nested_array
+        .iter()
+        .flat_map(|array| array.iter())
+        .cloned()
+        .collect()
+}
+
+fn concatenate_vector(patterns_one: &Vec<String>, patterns_two: &Vec<String>) -> Vec<String> {
+    patterns_one
+        .iter()
+        .chain(patterns_two.iter())
+        .cloned()
+        .collect()
+}
+
 #[allow(unused_variables)]
 fn main() {
     let path_json = "./test.json";
@@ -121,6 +137,47 @@ mod tests {
                 vec![vec!["word".to_string(), "key".to_string()]]
             ),
             result
+        );
+    }
+    #[test]
+    fn test_flatten_vector() {
+        let dummy = vec![
+            vec!["test".to_string(), "home".to_string(), "key".to_string()],
+            vec![
+                "test2".to_string(),
+                "home2".to_string(),
+                "word2".to_string(),
+            ],
+        ];
+        let actual = flatten_vector(&dummy);
+        assert_eq!(
+            vec![
+                "test".to_string(),
+                "home".to_string(),
+                "key".to_string(),
+                "test2".to_string(),
+                "home2".to_string(),
+                "word2".to_string(),
+            ],
+            actual
+        );
+    }
+
+    #[test]
+    fn test_concatenate_vector() {
+        let dummy_one = vec!["test".to_string(), "home".to_string(), "word".to_string()];
+        let dummy_two = vec!["test".to_string(), "angry".to_string(), "key".to_string()];
+        let actual = concatenate_vector(&dummy_one, &dummy_two);
+        assert_eq!(
+            vec![
+                "test".to_string(),
+                "home".to_string(),
+                "word".to_string(),
+                "test".to_string(),
+                "angry".to_string(),
+                "key".to_string()
+            ],
+            actual
         );
     }
 }
