@@ -1,0 +1,22 @@
+version: '3'
+services:
+  zookeeper:
+    image: wurstmeister/zookeeper
+    ports:
+      - "2181"
+    hostname: zookeeper
+  kafka:
+    image: wurstmeister/kafka
+    command: [start-kafka.sh]
+    ports:
+      - "9092:9092"
+    hostname: localhost
+    environment:
+      KAFKA_CREATE_TOPICS: "UploadFile:1:1,GetFile:1:1,TrackUpload:1:1,GetEmailContent:1:1" # topic:partition:replicas
+      KAFKA_ADVERTISED_HOST_NAME: localhost
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_PORT: 9092
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - "zookeeper"
