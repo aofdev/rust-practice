@@ -10,9 +10,13 @@ edition = "2018"
 tokio = { version = "1.8.1", features = ["full"] }
 clap = "2.33.3"
 log = "0.4.14"
+rand = "0.8.4"
+futures = "0.3.15"
 chrono = "0.4.19"
 env_logger = "0.9.0"
 rdkafka = { version = "0.26", features = ["cmake-build"] }
+reqwest = { version = "0.11", features = ["blocking", "json"] }
+serde = { version = "1.0.126", features = ["derive"] }
 
 [[bin]]
 name = "producer"
@@ -21,3 +25,7 @@ path = "src/producer.rs"
 [[bin]]
 name = "consumer"
 path = "src/consumer.rs"
+
+[[bin]]
+name = "async_processing"
+path = "src/async_processing.rs"
