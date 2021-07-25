@@ -13,7 +13,8 @@
 // mod vars;
 // mod vectors;
 // mod macro_rules;
-mod lifetimes;
+// mod lifetimes;
+mod traits;
 
 fn main() {
     // vars::run();
@@ -31,5 +32,6 @@ fn main() {
     // ownership_borrowing::run();
     // generic_bounds::run();
     // macro_rules::run();
-    lifetimes::run();
+    // lifetimes::run();
+    traits::run();
 }
