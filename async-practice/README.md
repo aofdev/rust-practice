@@ -1,16 +1,12 @@
 # Async Practice
+ - [async_std](https://async.rs/)
+ - [tokio](https://tokio.rs/)
 
 ## Quick Start ⚡️
 ```bash
-# Run with Cargo
-RUST_LOG=info cargo run
-```
+# Run async std
+cargo run --bin async_std
 
-## Build 🚀
-```bash
-# build a main app
-cargo build --release
+# Run tokio
+RUST_LOG=info cargo run --bin tokio
 ```
-
-## Reference
-> A practical guide to async in Rust: https://blog.logrocket.com/a-practical-guide-to-async-in-rust/
