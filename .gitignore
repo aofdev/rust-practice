@@ -3,7 +3,7 @@
 /target/
 practices/target/
 parser-csv-in-gz/target/
-async-practice/target/
+concurrency-practice/target/
 error-handling/target/
 api-practice/target/
 matching-keyword/target/

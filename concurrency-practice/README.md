@@ -4,6 +4,9 @@
 
 ## Quick Start ⚡️
 ```bash
+# Run threads
+cargo run --bin threads
+
 # Run async std
 cargo run --bin async_std
 

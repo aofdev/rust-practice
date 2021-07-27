@@ -1,5 +1,5 @@
 [package]
-name = "async-practice"
+name = "concurrency-practice"
 version = "0.1.0"
 authors = ["aofdev <aof.dev@gmail.com>"]
 edition = "2018"
@@ -15,6 +15,9 @@ tokio = { version = "1.7.0", features = ["full"] }
 log = "0.4.14"
 env_logger = "0.8.4"
 
+[[bin]]
+name = "threads"
+path = "src/threads.rs"
 
 [[bin]]
 name = "async_std"
