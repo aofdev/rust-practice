@@ -1,0 +1,16 @@
+[package]
+name = "rabbitmq"
+version = "0.1.0"
+authors = ["aofdev <aof.dev@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+tokio = { version = "1.9.0", features = ["macros", "time", "rt-multi-thread"] }
+futures = { version = "0.3", default-features = false }
+tokio-amqp = "1.0.0"
+thiserror = "1.0.26"
+deadpool = "0.8"
+deadpool-lapin = "0.8"
+lapin = "1.7.1"

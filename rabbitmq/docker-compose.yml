@@ -1,0 +1,11 @@
+version: "3"
+services:
+  rabbitmq:
+    container_name: rabbitmq-local
+    image: rabbitmq:3-management
+    ports:
+      - "5678:5672"
+      - "15678:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: "testrabbit"
+      RABBITMQ_DEFAULT_PASS: "0passrabbitmq1"
