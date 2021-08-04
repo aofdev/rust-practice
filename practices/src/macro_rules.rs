@@ -21,11 +21,7 @@ macro_rules! test {
 }
 
 macro_rules! print_result {
-    // This macro takes an expression of type `expr` and prints
-    // it as a string along with its result.
-    // The `expr` designator is used for expressions.
     ($expression:expr) => {
-        // `stringify!` will convert the expression *as it is* into a string.
         println!("{:?} = {:?}", stringify!($expression), $expression);
     };
 }
@@ -43,6 +39,34 @@ macro_rules! vec_sample {
     };
 }
 
+macro_rules! adder {
+    ($($right:expr),+) => {{
+        let mut total: i32 = 0;
+        $(
+            dbg!(total += $right);
+        )+
+        total
+    }};
+}
+
+macro_rules! operations {
+    (add $($addend:expr),+; mult $($multiplier:expr),+) => {{
+        let mut sum = 0;
+        let mut product = 1;
+
+        $(
+            sum += $addend;
+         )*
+
+         $(
+              product *= $multiplier;
+          )*
+
+
+          println!("Sum: {} | Product: {}", sum, product);
+    }}
+}
+
 #[allow(clippy::eq_op, clippy::vec_init_then_push)]
 pub fn run() {
     print_result!(20 + 30 + 50);
@@ -50,5 +74,7 @@ pub fn run() {
     test!(true; or false);
     let v: Vec<u32> = vec_sample![1, 2, 3];
     // let v: Vec<u32> = vec![1, 2, 3];
-    println!("{:?}", v)
+    println!("{:?}", v);
+    assert_eq!(adder!(1, 2, 3, 4, 5), 15);
+    operations!(add 1, 2, 3; mult 4, 5);
 }
