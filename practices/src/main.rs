@@ -12,9 +12,10 @@
 // mod types;
 // mod vars;
 // mod vectors;
-// mod macro_rules;
+mod macro_rules;
 // mod lifetimes;
-mod traits;
+// mod traits;
+// mod linked_list;
 
 fn main() {
     // vars::run();
@@ -31,7 +32,8 @@ fn main() {
     // pointer_ref::run();
     // ownership_borrowing::run();
     // generic_bounds::run();
-    // macro_rules::run();
+    macro_rules::run();
     // lifetimes::run();
-    traits::run();
+    // traits::run();
+    // linked_list::run();
 }
