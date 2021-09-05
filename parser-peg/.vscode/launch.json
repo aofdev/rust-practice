@@ -1,0 +1,45 @@
+{
+	// Use IntelliSense to learn about possible attributes.
+	// Hover to view descriptions of existing attributes.
+	// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"type": "lldb",
+			"request": "launch",
+			"name": "Debug executable 'parser-peg'",
+			"cargo": {
+				"args": [
+					"build",
+					"--bin=parser-peg",
+					"--package=parser-peg"
+				],
+				"filter": {
+					"name": "parser-peg",
+					"kind": "bin"
+				}
+			},
+			"args": [],
+			"cwd": "${workspaceFolder}"
+		},
+		{
+			"type": "lldb",
+			"request": "launch",
+			"name": "Debug unit tests in executable 'parser-peg'",
+			"cargo": {
+				"args": [
+					"test",
+					"--no-run",
+					"--bin=parser-peg",
+					"--package=parser-peg"
+				],
+				"filter": {
+					"name": "parser-peg",
+					"kind": "bin"
+				}
+			},
+			"args": [],
+			"cwd": "${workspaceFolder}"
+		}
+	]
+}
