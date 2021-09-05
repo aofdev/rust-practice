@@ -1,0 +1,21 @@
+[package]
+name = "grpc"
+version = "0.1.0"
+authors = ["aofdev <aof.dev@gmail.com>"]
+edition = "2018"
+
+[[bin]]
+name = "helloworld-server"
+path = "src/server.rs"
+
+[[bin]]
+name = "helloworld-client"
+path = "src/client.rs"
+
+[dependencies]
+tonic = "0.5"
+prost = "0.8"
+tokio = { version = "1.0", features = ["macros", "rt-multi-thread"] }
+
+[build-dependencies]
+tonic-build = "0.5"
