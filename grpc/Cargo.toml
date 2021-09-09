@@ -4,18 +4,26 @@ version = "0.1.0"
 authors = ["aofdev <aof.dev@gmail.com>"]
 edition = "2018"
 
-[[bin]]
-name = "helloworld-server"
-path = "src/server.rs"
-
-[[bin]]
-name = "helloworld-client"
-path = "src/client.rs"
-
 [dependencies]
-tonic = "0.5"
-prost = "0.8"
-tokio = { version = "1.0", features = ["macros", "rt-multi-thread"] }
+tonic = "0.5.2"
+bytes = "1.1.0"
+prost = "0.8.0"
+prost-derive = "0.8.0"
+prost-types = "0.8.0"
+tokio = { version = "1.11.0", features = ["full"] }
+futures = { version = "0.3", default-features = false, features = ["alloc"]}
+async-stream = "0.3"
+http = "0.2"
+r2d2 = "0.8.9"
+tower = "0.4"
+serde = { version = "1.0.130", features = ["derive"] }
+serde_json = "1.0.67"
+serde_derive = "1.0.130"
+console = "0.14"
+diesel = { version = "1.4.7", features = ["postgres", "uuidv07", "r2d2", "chrono"] }
+dotenv = "0.15.0"
+chrono = { version = "0.4.19", features = ["serde"] }
+uuid = { version = "0.8.2", features = ["serde", "v4"] }
 
 [build-dependencies]
-tonic-build = "0.5"
+tonic-build = "0.5.2"
