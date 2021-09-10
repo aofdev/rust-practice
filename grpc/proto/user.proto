@@ -21,10 +21,10 @@ package user;
 service UserService {
  rpc GetUser (UserRequest) returns (UserReply) {}
   rpc ListUsers(Empty) returns (Users) {}
-//  rpc CreateUser (CreateUserRequest) returns (CreateUserReply) {}
-//  rpc UpdateUser (UpdateUserRequest) returns (UpdateUserReply) {}
-//  rpc DeleteUser (UserRequest) returns (DeleteUserReply) {}
-//  rpc DeleteUsers (Empty) returns (DeleteUserReply) {}
+ rpc CreateUser (CreateUserRequest) returns (CreateUserReply) {}
+ rpc UpdateUser (UpdateUserRequest) returns (UpdateUserReply) {}
+ rpc DeleteUser (UserRequest) returns (DeleteUserReply) {}
+ rpc DeleteUsers (Empty) returns (DeleteUserReply) {}
 }
 
 message Empty {}
@@ -41,32 +41,32 @@ message UserReply {
     string created_at = 5;
 }
 
-// message CreateUserRequest {
-//     string first_name = 1;
-//     string last_name = 2;
-//     string email = 3;
-//     string created_at = 4;
-// }
+message CreateUserRequest {
+    string first_name = 1;
+    string last_name = 2;
+    string email = 3;
+    string created_at = 4;
+}
 
-// message CreateUserReply {
-//     string message = 1;
-// }
+message CreateUserReply {
+    string message = 1;
+}
 
-// message UpdateUserRequest {
-//     string id = 1;
-//     string first_name = 2;
-//     string last_name = 3;
-//     string email = 4;
-//     string created_at = 5;
-// }
+message UpdateUserRequest {
+    string id = 1;
+    string first_name = 2;
+    string last_name = 3;
+    string email = 4;
+    string created_at = 5;
+}
 
-// message UpdateUserReply {
-//     string message = 1;
-// }
+message UpdateUserReply {
+    string message = 1;
+}
 
-// message DeleteUserReply {
-//     string message = 1;
-// }
+message DeleteUserReply {
+    string message = 1;
+}
 
 message Users {
     repeated UserReply users = 1;
