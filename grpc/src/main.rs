@@ -13,8 +13,6 @@ use tonic::transport::Server;
 
 use user::user_service_server::UserServiceServer;
 
-extern crate uuid;
-
 extern crate console;
 use console::Style;
 

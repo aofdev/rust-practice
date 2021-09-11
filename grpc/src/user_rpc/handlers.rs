@@ -20,14 +20,14 @@ pub async fn get_user(db: Pool, user_id: i32) -> User {
     }
 }
 
-pub async fn add_user(db: Pool, input_user: InputUser) -> User {
+pub async fn add_user(db: Pool, input_user: InputUser) -> usize {
     match add_user_db(db, input_user).await {
         Ok(item) => item,
         Err(e) => panic!("Error add_user: {}", e),
     }
 }
 
-pub async fn update_user(db: Pool, user_id: i32, input_user: InputUser) -> User {
+pub async fn update_user(db: Pool, user_id: i32, input_user: InputUser) -> usize {
     match update_user_db(db, user_id, input_user).await {
         Ok(item) => item,
         Err(e) => panic!("Error update_user: {}", e),
@@ -52,7 +52,7 @@ async fn get_user_db(pool: Pool, user_id: i32) -> Result<User, diesel::result::E
     users.find(user_id).get_result::<User>(&conn)
 }
 
-async fn add_user_db(pool: Pool, item: InputUser) -> Result<User, diesel::result::Error> {
+async fn add_user_db(pool: Pool, item: InputUser) -> Result<usize, diesel::result::Error> {
     let conn = pool.get().unwrap();
     let new_user = NewUser {
         first_name: &item.first_name,
@@ -60,7 +60,7 @@ async fn add_user_db(pool: Pool, item: InputUser) -> Result<User, diesel::result
         email: &item.email,
         created_at: chrono::Local::now().naive_local(),
     };
-    let res = insert_into(users).values(&new_user).get_result(&conn)?;
+    let res: usize = insert_into(users).values(&new_user).execute(&conn)?;
     Ok(res)
 }
 
@@ -68,17 +68,17 @@ async fn update_user_db(
     pool: Pool,
     user_id: i32,
     item: InputUser,
-) -> Result<User, diesel::result::Error> {
+) -> Result<usize, diesel::result::Error> {
     let conn = pool.get().unwrap();
     let updated = update(users.find(user_id))
         .set(User {
             id: user_id,
-            first_name: item.first_name.to_string(),
-            last_name: item.last_name.to_string(),
-            email: item.email.to_string(),
+            first_name: item.first_name,
+            last_name: item.last_name,
+            email: item.email,
             created_at: chrono::Local::now().naive_local(),
         })
-        .get_result(&conn)?;
+        .execute(&conn)?;
     Ok(updated)
 }
 
