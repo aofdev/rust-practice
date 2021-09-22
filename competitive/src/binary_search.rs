@@ -3,7 +3,7 @@ use std::cmp::Ordering;
 fn main() {}
 
 // Binary Search https://leetcode.com/problems/binary-search/
-pub fn binary_search(nums: Vec<i32>, target: i32) -> i32 {
+pub fn binary_search_1(nums: Vec<i32>, target: i32) -> i32 {
     let (mut low, mut high) = (0, nums.len());
 
     while low < high {
@@ -15,29 +15,6 @@ pub fn binary_search(nums: Vec<i32>, target: i32) -> i32 {
         }
     }
     -1
-}
-
-// https://leetcode.com/problems/first-bad-version/
-fn is_bad_version(version: i32) -> bool {
-    // bad version 5-8
-    match version {
-        5..=8 => true,
-        _ => false,
-    }
-}
-pub fn first_bad_version(n: i32) -> i32 {
-    let mut left = 1;
-    let mut right = n;
-
-    while left != right {
-        let middle = left + (right - left) / 2;
-        if is_bad_version(middle) {
-            right = middle;
-        } else {
-            left = middle + 1;
-        }
-    }
-    left
 }
 
 pub fn binary_search_2(k: i32, items: &[i32]) -> Option<usize> {
@@ -68,19 +45,58 @@ pub fn binary_search_2(k: i32, items: &[i32]) -> Option<usize> {
     None
 }
 
-#[test]
-fn test_binary_search() {
-    let nums = vec![-1, 0, 3, 5, 9, 12];
-    assert_eq!(4, binary_search(nums.clone(), 9));
-    assert_eq!(-1, binary_search(nums.clone(), 2));
+// https://leetcode.com/problems/first-bad-version/
+fn is_bad_version(version: i32) -> bool {
+    // bad version 5-8
+    match version {
+        5..=8 => true,
+        _ => false,
+    }
+}
+pub fn first_bad_version(n: i32) -> i32 {
+    let mut left = 1;
+    let mut right = n;
+
+    while left != right {
+        let middle = left + (right - left) / 2;
+        if is_bad_version(middle) {
+            right = middle;
+        } else {
+            left = middle + 1;
+        }
+    }
+    left
+}
+
+// https://leetcode.com/problems/search-insert-position/
+pub fn search_insert(nums: Vec<i32>, target: i32) -> i32 {
+    let (mut left, mut right) = (0, nums.len() - 1);
+    if target < nums[0] {
+        return 0;
+    }
+    while left <= right {
+        let middle = left + (right - left) / 2;
+        if nums[middle] == target {
+            return middle as i32;
+        }
+        if nums[middle] < target {
+            left = middle + 1;
+        } else {
+            right = middle - 1;
+        }
+    }
+    left as i32
+}
+
+pub fn search_insert_one_line(nums: Vec<i32>, target: i32) -> i32 {
+    nums.binary_search(&target).unwrap_or_else(|x| x) as i32
 }
 
 #[test]
-fn test_first_bad_version() {
-    assert_eq!(5, first_bad_version(6));
-    assert_eq!(5, first_bad_version(8));
-    assert_eq!(2, first_bad_version(2));
-    assert_eq!(4, first_bad_version(4));
+fn test_binary_search_1() {
+    let nums = vec![-1, 0, 3, 5, 9, 12];
+    assert_eq!(4, binary_search_1(nums.clone(), 9));
+    assert_eq!(-1, binary_search_1(nums.clone(), 2));
 }
 
 #[test]
@@ -98,4 +114,19 @@ fn test_binary_search_2() {
     let items = vec![2, 4, 6, 80, 90, 120, 180, 900, 2000, 4000, 5000, 60000];
     assert_eq!(None, binary_search_2(1, &items));
     assert_eq!(None, binary_search_2(1, &[]));
+}
+
+#[test]
+fn test_first_bad_version() {
+    assert_eq!(5, first_bad_version(6));
+    assert_eq!(5, first_bad_version(8));
+    assert_eq!(2, first_bad_version(2));
+    assert_eq!(4, first_bad_version(4));
+}
+
+#[test]
+fn test_search_insert() {
+    let nums = vec![-1, 0, 3, 5, 9, 12];
+    assert_eq!(4, search_insert(nums.clone(), 9));
+    assert_eq!(2, search_insert_one_line(nums.clone(), 2));
 }
