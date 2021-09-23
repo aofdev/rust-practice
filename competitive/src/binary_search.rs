@@ -92,6 +92,27 @@ pub fn search_insert_one_line(nums: Vec<i32>, target: i32) -> i32 {
     nums.binary_search(&target).unwrap_or_else(|x| x) as i32
 }
 
+// https://leetcode.com/problems/squares-of-a-sorted-array/
+pub fn sorted_squares(mut nums: Vec<i32>) -> Vec<i32> {
+    nums.sort_unstable_by_key(|x| x.abs());
+    nums.iter_mut().for_each(|x| *x = x.pow(2));
+    nums
+}
+
+// https://leetcode.com/problems/rotate-array
+pub fn rotate(nums: &mut Vec<i32>, k: i32) {
+    let k = (k as usize) % nums.len();
+    nums.rotate_right(k);
+}
+
+pub fn rotate_reverse(nums: &mut Vec<i32>, k: i32) {
+    let len = nums.len();
+    let k = k as usize % len;
+    nums.reverse();
+    nums[..k].reverse();
+    nums[k..].reverse();
+}
+
 #[test]
 fn test_binary_search_1() {
     let nums = vec![-1, 0, 3, 5, 9, 12];
@@ -129,4 +150,23 @@ fn test_search_insert() {
     let nums = vec![-1, 0, 3, 5, 9, 12];
     assert_eq!(4, search_insert(nums.clone(), 9));
     assert_eq!(2, search_insert_one_line(nums.clone(), 2));
+}
+
+#[test]
+fn test_sorted_squares() {
+    let nums = vec![-4, -1, 0, 3, 10];
+    assert_eq!(vec![0, 1, 9, 16, 100], sorted_squares(nums));
+}
+
+#[test]
+fn test_rotate() {
+    let mut nums = vec![1, 2, 3, 4, 5, 6, 7];
+    let k = 3;
+    rotate(&mut nums, k);
+    assert_eq!(vec![5, 6, 7, 1, 2, 3, 4], nums);
+
+    let mut nums = vec![-1, -100, 3, 99];
+    let k = 2;
+    rotate_reverse(&mut nums, k);
+    assert_eq!(vec![3, 99, -1, -100], nums);
 }
