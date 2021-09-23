@@ -5,8 +5,3 @@ edition = "2018"
 
 
 [dependencies]
-
-
-[[bin]]
-name = "binary_search"
-path = "src/binary_search.rs"
