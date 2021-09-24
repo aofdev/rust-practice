@@ -113,6 +113,33 @@ pub fn rotate_reverse(nums: &mut Vec<i32>, k: i32) {
     nums[k..].reverse();
 }
 
+// https://leetcode.com/problems/move-zeroes/
+pub fn move_zeroes(nums: &mut Vec<i32>) {
+    let mut z = Vec::new();
+    nums.retain(|x| {
+        if *x != 0 {
+            true
+        } else {
+            z.push(0);
+            false
+        }
+    });
+    &nums.append(&mut z);
+}
+
+// https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/
+pub fn two_sum(numbers: Vec<i32>, target: i32) -> Vec<i32> {
+    let mut i = 0;
+    let mut j = numbers.len() - 1;
+    loop {
+        match (numbers[i] + numbers[j]).cmp(&target) {
+            Ordering::Equal => return vec![i as i32 + 1, j as i32 + 1],
+            Ordering::Greater => j -= 1,
+            Ordering::Less => i += 1,
+        }
+    }
+}
+
 #[test]
 fn test_binary_search_1() {
     let nums = vec![-1, 0, 3, 5, 9, 12];
@@ -169,4 +196,17 @@ fn test_rotate() {
     let k = 2;
     rotate_reverse(&mut nums, k);
     assert_eq!(vec![3, 99, -1, -100], nums);
+}
+
+#[test]
+fn test_move_zeroes() {
+    let mut nums = vec![0, 1, 0, 3, 12];
+    move_zeroes(&mut nums);
+    assert_eq!(vec![1, 3, 12, 0, 0], nums);
+}
+
+#[test]
+fn test_two_sum() {
+    let nums = vec![2, 7, 11, 15];
+    assert_eq!(vec![1, 2], two_sum(nums, 9));
 }
