@@ -140,6 +140,31 @@ pub fn two_sum(numbers: Vec<i32>, target: i32) -> Vec<i32> {
     }
 }
 
+// https://leetcode.com/problems/reverse-string
+pub fn reverse_string(s: &mut Vec<char>) {
+    if s.len() > 0 {
+        let mut left = 0;
+        let mut right = s.len() - 1;
+        while left < right {
+            s.swap(left, right);
+            left += 1;
+            right -= 1;
+        }
+    }
+}
+
+pub fn reverse_string_one_line(s: &mut Vec<char>) {
+    s.reverse();
+}
+
+// https://leetcode.com/problems/reverse-words-in-a-string-iii/
+pub fn reverse_words(s: String) -> String {
+    s.split(" ")
+        .map(|s| s.chars().rev().collect::<String>())
+        .collect::<Vec<_>>()
+        .join(" ")
+}
+
 #[test]
 fn test_binary_search_1() {
     let nums = vec![-1, 0, 3, 5, 9, 12];
@@ -209,4 +234,16 @@ fn test_move_zeroes() {
 fn test_two_sum() {
     let nums = vec![2, 7, 11, 15];
     assert_eq!(vec![1, 2], two_sum(nums, 9));
+}
+
+#[test]
+fn test_reverse_string() {
+    let mut s = vec!['h', 'e', 'l', 'l', 'o'];
+    reverse_string(&mut s);
+}
+
+#[test]
+fn test_reverse_words() {
+    let s = "Let's take LeetCode contest".to_string();
+    assert_eq!("s'teL ekat edoCteeL tsetnoc".to_string(), reverse_words(s));
 }
