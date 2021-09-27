@@ -165,6 +165,30 @@ pub fn reverse_words(s: String) -> String {
         .join(" ")
 }
 
+// https://leetcode.com/problems/middle-of-the-linked-list/
+#[derive(PartialEq, Eq, Clone, Debug)]
+pub struct ListNode {
+    pub val: i32,
+    pub next: Option<Box<ListNode>>,
+}
+
+impl ListNode {
+    #[inline]
+    fn new(val: i32) -> Self {
+        ListNode { next: None, val }
+    }
+}
+
+pub fn middle_node(head: Option<Box<ListNode>>) -> Option<Box<ListNode>> {
+    let mut slow = &head;
+    let mut fast = &head;
+    while fast.is_some() && fast.as_ref().unwrap().next.is_some() {
+        slow = &slow.as_ref().unwrap().next;
+        fast = &fast.as_ref().unwrap().next.as_ref().unwrap().next;
+    }
+    slow.clone()
+}
+
 #[test]
 fn test_binary_search_1() {
     let nums = vec![-1, 0, 3, 5, 9, 12];
@@ -246,4 +270,33 @@ fn test_reverse_string() {
 fn test_reverse_words() {
     let s = "Let's take LeetCode contest".to_string();
     assert_eq!("s'teL ekat edoCteeL tsetnoc".to_string(), reverse_words(s));
+}
+
+#[test]
+fn test_middle_node() {
+    let mut head = Some(Box::new(ListNode::new(1)));
+    head.as_mut().unwrap().next = Some(Box::new(ListNode::new(2)));
+    head.as_mut().unwrap().next.as_mut().unwrap().next = Some(Box::new(ListNode::new(3)));
+    head.as_mut()
+        .unwrap()
+        .next
+        .as_mut()
+        .unwrap()
+        .next
+        .as_mut()
+        .unwrap()
+        .next = Some(Box::new(ListNode::new(4)));
+    head.as_mut()
+        .unwrap()
+        .next
+        .as_mut()
+        .unwrap()
+        .next
+        .as_mut()
+        .unwrap()
+        .next
+        .as_mut()
+        .unwrap()
+        .next = Some(Box::new(ListNode::new(5)));
+    assert_eq!(3, middle_node(head).unwrap().val);
 }
