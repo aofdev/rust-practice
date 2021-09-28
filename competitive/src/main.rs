@@ -189,6 +189,30 @@ pub fn middle_node(head: Option<Box<ListNode>>) -> Option<Box<ListNode>> {
     slow.clone()
 }
 
+// https://leetcode.com/problems/remove-nth-node-from-end-of-list/
+pub fn remove_nth_from_end(head: Option<Box<ListNode>>, n: i32) -> Option<Box<ListNode>> {
+    let mut dummy = Box::new(ListNode {
+        val: -1,
+        next: head,
+    });
+
+    let mut right = dummy.clone();
+    let mut left = dummy.as_mut();
+
+    for _ in 0..n {
+        right = right.next.unwrap();
+    }
+
+    while let Some(node) = right.next {
+        right = node;
+        left = left.next.as_mut().unwrap();
+    }
+
+    left.next = left.next.as_mut().unwrap().next.clone();
+
+    dummy.next
+}
+
 #[test]
 fn test_binary_search_1() {
     let nums = vec![-1, 0, 3, 5, 9, 12];
