@@ -213,6 +213,31 @@ pub fn remove_nth_from_end(head: Option<Box<ListNode>>, n: i32) -> Option<Box<Li
     dummy.next
 }
 
+// https://leetcode.com/problems/sort-array-by-parity-ii
+pub fn sort_array_by_parity_ii(a: Vec<i32>) -> Vec<i32> {
+    let mut res = Vec::with_capacity(a.len());
+    let mut odds = a.clone();
+    odds.retain(|&x| x % 2 != 0);
+    let mut evens = a.clone();
+    evens.retain(|&x| x % 2 == 0);
+    for i in 0..a.len() {
+        if i % 2 != 0 {
+            res.push(odds.pop().unwrap());
+        } else {
+            res.push(evens.pop().unwrap());
+        }
+    }
+    res
+}
+
+pub fn sort_array_by_parity_ii_functional(nums: Vec<i32>) -> Vec<i32> {
+    nums.iter()
+        .filter(|&num| num % 2 == 0)
+        .zip(nums.iter().filter(|&num| num % 2 != 0))
+        .flat_map(|(&even, &odd)| vec![even, odd].into_iter())
+        .collect()
+}
+
 #[test]
 fn test_binary_search_1() {
     let nums = vec![-1, 0, 3, 5, 9, 12];
@@ -323,4 +348,11 @@ fn test_middle_node() {
         .unwrap()
         .next = Some(Box::new(ListNode::new(5)));
     assert_eq!(3, middle_node(head).unwrap().val);
+}
+
+#[test]
+fn test_sort_array_by_parity_ii() {
+    let nums = vec![4, 2, 5, 7];
+    assert_eq!(vec![2, 7, 4, 5], sort_array_by_parity_ii(nums.clone()));
+    assert_eq!(vec![4, 5, 2, 7], sort_array_by_parity_ii_functional(nums));
 }
