@@ -1,5 +1,0 @@
-{
-  "name": "test",
-  "include": ["account", "home", "hi+go+good", "สวัสดี+ครับ"],
-  "exclude": ["dddd+ffff+gggg", "เธอ", "home+house"]
-}

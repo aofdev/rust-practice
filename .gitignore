@@ -6,7 +6,6 @@ parser-csv-in-gz/target/
 concurrency-practice/target/
 error-handling/target/
 api-practice/target/
-matching-keyword/target/
 kafka/target/
 rabbitmq/target/
 parser-peg/target/

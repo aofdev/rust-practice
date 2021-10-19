@@ -8,7 +8,6 @@
 - [error-handling-practice](https://github.com/aofdev/rust-practice/tree/main/error-handling)
 - [gRPC-practice](https://github.com/aofdev/rust-practice/tree/main/grpc)
 - [kafka-practice](https://github.com/aofdev/rust-practice/tree/main/kafka)
-- [matching-keyword ⭐️](https://github.com/aofdev/rust-practice/tree/main/matching-keyword)
 - [parser-csv-in-gz](https://github.com/aofdev/rust-practice/tree/main/parser-csv-in-gz)
 - [parser-peg](https://github.com/aofdev/rust-practice/tree/main/parser-peg)
 - [practices](https://github.com/aofdev/rust-practice/tree/main/practices)
