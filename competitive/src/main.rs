@@ -238,6 +238,19 @@ pub fn sort_array_by_parity_ii_functional(nums: Vec<i32>) -> Vec<i32> {
         .collect()
 }
 
+// https://leetcode.com/problems/contains-duplicate/
+pub fn contains_duplicate(nums: Vec<i32>) -> bool {
+    let mut v = nums.clone();
+    v.sort_unstable();
+    v.dedup();
+    v.len() != nums.len()
+}
+
+// https://leetcode.com/problems/single-number/
+pub fn single_number(nums: Vec<i32>) -> i32 {
+    nums.iter().fold(0, |acc, &x| acc ^ x)
+}
+
 #[test]
 fn test_binary_search_1() {
     let nums = vec![-1, 0, 3, 5, 9, 12];
@@ -355,4 +368,17 @@ fn test_sort_array_by_parity_ii() {
     let nums = vec![4, 2, 5, 7];
     assert_eq!(vec![2, 7, 4, 5], sort_array_by_parity_ii(nums.clone()));
     assert_eq!(vec![4, 5, 2, 7], sort_array_by_parity_ii_functional(nums));
+}
+
+#[test]
+fn test_contains_duplicate() {
+    let nums = vec![1, 2, 3, 1];
+    assert_eq!(true, contains_duplicate(nums.clone()));
+    assert_eq!(false, contains_duplicate(vec![1, 2, 3, 4]));
+}
+
+#[test]
+fn test_single_number() {
+    let nums = vec![4, 1, 2, 1, 2];
+    assert_eq!(4, single_number(nums));
 }
