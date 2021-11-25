@@ -14,9 +14,9 @@
 // mod vectors;
 // mod macro_rules;
 // mod lifetimes;
-// mod traits;
+mod traits;
 // mod linked_list;
-mod smart_pointer;
+// mod smart_pointer;
 
 fn main() {
     // vars::run();
@@ -35,7 +35,7 @@ fn main() {
     // generic_bounds::run();
     // macro_rules::run();
     // lifetimes::run();
-    // traits::run();
+    traits::run();
     // linked_list::run();
-    smart_pointer::run();
+    // smart_pointer::run();
 }

@@ -1,6 +1,3 @@
-use std::iter;
-use std::vec::IntoIter;
-
 // Derive
 #[derive(PartialEq, PartialOrd)]
 struct Centimeters(f64);
@@ -110,6 +107,32 @@ impl AgeWidget for Form {
     }
 }
 
+struct NewsArticle {
+    pub author: String,
+    pub headline: String,
+    pub content: String,
+}
+
+impl Summary for NewsArticle {
+    fn summarize(&self) -> String {
+        format!("{}, by {} ({})", self.headline, self.author, self.content)
+    }
+}
+
+struct Tweet {
+    pub username: String,
+    pub content: String,
+}
+
+impl Summary for Tweet {
+    fn summarize(&self) -> String {
+        format!("{}: {}", self.username, self.content)
+    }
+}
+trait Summary {
+    fn summarize(&self) -> String;
+}
+
 pub fn run() {
     let _one_second = Seconds(1);
 
@@ -166,4 +189,16 @@ pub fn run() {
     assert_eq!("rustacean".to_owned(), username);
     let age = <Form as AgeWidget>::get(&form);
     assert_eq!(28, age);
+
+    let tweet = Tweet {
+        username: "horse_ebooks".to_owned(),
+        content: "of course, as you probably already know, people".to_owned(),
+    };
+    let article = NewsArticle {
+        author: "John Doe".to_owned(),
+        headline: "Penguins win the Stanley Cup Championship".to_owned(),
+        content: "The Pittsburgh Penguins once again are the best".to_owned(),
+    };
+    println!("New article available! {}", article.summarize());
+    println!("New tweet available! {}", tweet.summarize());
 }
