@@ -5,6 +5,7 @@ practices/target/
 parser-csv-in-gz/target/
 concurrency-practice/target/
 error-handling/target/
+actix-practice/target/
 api-practice/target/
 kafka/target/
 rabbitmq/target/
