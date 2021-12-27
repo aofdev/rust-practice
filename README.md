@@ -2,6 +2,7 @@
 
 ## Table of content 📔
 
+- [actix-practice](https://github.com/aofdev/rust-practice/tree/main/actix-practice)
 - [api-practice](https://github.com/aofdev/rust-practice/tree/main/api-practice)
 - [competitive](https://github.com/aofdev/rust-practice/tree/main/competitive)
 - [concurrency-practice](https://github.com/aofdev/rust-practice/tree/main/concurrency-practice)
