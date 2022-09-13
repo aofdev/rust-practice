@@ -56,19 +56,3 @@ async fn main() -> io::Result<()> {
     .run()
     .await
 }
-
-// #[cfg(test)]
-// mod tests {
-//     use actix_web::web::Bytes;
-//     use actix_web::{test, web, App};
-
-//     use crate::greet;
-
-//     #[actix_rt::test]
-//     async fn test_startup_ok() {
-//         let mut app = test::init_service(App::new().route("/", web::get().to(greet))).await;
-//         let req = test::TestRequest::with_header("content-type", "text/plain").to_request();
-//         let result = test::read_response(&mut app, req).await;
-//         assert_eq!(result, Bytes::from_static(b"Hello World!"));
-//     }
-// }

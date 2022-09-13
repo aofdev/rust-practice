@@ -26,3 +26,18 @@ pub fn config_services(cfg: &mut ServiceConfig) {
         ),
     );
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use actix_web::web::Bytes;
+    use actix_web::{test, web, App};
+
+    #[actix_rt::test]
+    async fn test_startup_ok() {
+        let mut app = test::init_service(App::new().route("/books", web::get().to(books))).await;
+        let req = test::TestRequest::with_header("content-type", "text/plain").to_request();
+        let result = test::read_response(&mut app, req).await;
+        assert_eq!(result, Bytes::from_static(b""));
+    }
+}
