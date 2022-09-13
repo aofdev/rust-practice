@@ -1,16 +1,14 @@
 use color_eyre::Report;
 use reqwest::header::USER_AGENT;
 use reqwest::Client;
-use std::future::Future;
+use std::{future::Future, time::Duration};
 use tracing::{info, Level};
 use tracing_subscriber::FmtSubscriber;
 
-pub const URL_1: &str = "https://api.github.com/users/aofdev";
-
-fn fetch_thing<'a>(
-    client: &'a Client,
-    url: &'a str,
-) -> impl Future<Output = Result<(), Report>> + 'a {
+fn fetch_thing(
+    client: &'static Client,
+    url: &'static str,
+) -> impl Future<Output = Result<(), Report>> + 'static {
     async move {
         let res = client
             .get(url)
@@ -21,28 +19,6 @@ fn fetch_thing<'a>(
         info!(%url, content_type = ?res.headers().get("content-type"), "Got a response!");
         Ok(())
     }
-}
-
-fn type_name_of<T>(_: &T) -> &'static str {
-    std::any::type_name::<T>()
-}
-
-#[tokio::main]
-async fn main() -> Result<(), Report> {
-    setup()?;
-
-    info!("Building that fetch future...");
-    let client = Client::new();
-    let fut = fetch_thing(&client, URL_1);
-    info!(
-        type_name = type_name_of(&fut),
-        "That fetch future has a type.."
-    );
-    info!("Awaiting that fetch future...");
-    fut.await?;
-    info!("Done awaiting that fetch future");
-
-    Ok(())
 }
 
 fn setup() -> Result<(), Report> {
@@ -60,5 +36,26 @@ fn setup() -> Result<(), Report> {
         .finish();
 
     tracing::subscriber::set_global_default(subscriber).expect("setting default subscriber failed");
+    Ok(())
+}
+
+#[tokio::main]
+async fn main() -> Result<(), Report> {
+    const URL_1: &str = "https://api.github.com/users/aofdev";
+    const URL_2: &str = "https://api.github.com/users/aofdev/repos";
+
+    setup()?;
+
+    let client = Client::new();
+    let leaked_client = Box::leak(Box::new(client));
+
+    let fut1 = fetch_thing(leaked_client, URL_1);
+    let fut2 = fetch_thing(leaked_client, URL_2);
+
+    tokio::spawn(fut1);
+    tokio::spawn(fut2);
+
+    tokio::time::sleep(Duration::from_secs(3)).await;
+
     Ok(())
 }
