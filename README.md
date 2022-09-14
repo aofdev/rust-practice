@@ -7,6 +7,7 @@
 - [competitive](https://github.com/aofdev/rust-practice/tree/main/competitive)
 - [concurrency-practice](https://github.com/aofdev/rust-practice/tree/main/concurrency-practice)
 - [error-handling-practice](https://github.com/aofdev/rust-practice/tree/main/error-handling)
+- [generics-practice](https://github.com/aofdev/rust-practice/tree/main/generics-practice)
 - [gRPC-practice](https://github.com/aofdev/rust-practice/tree/main/grpc)
 - [http-server-practice](https://github.com/aofdev/rust-practice/tree/main/http-server)
 - [kafka-practice](https://github.com/aofdev/rust-practice/tree/main/kafka)
